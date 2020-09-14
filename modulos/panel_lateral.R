@@ -182,40 +182,40 @@ PanelLateralServer = function(id,producto){
                  
                  # PRODUCTOS (switch cases) ...................................................
                  resultado = reactive({
-                   validate(need(input$edad, 'Verificar Edad'),
-                            need(input$sexo, 'Verificar Sexo'),
-                            need(input$tipo_interes, 'Verificar Tipo Interes'),
-                            need(input$duracion, 'Verificar Duracion'),
-                            need(input$cuantia, 'Verificar Cuantia'),
-                            need(input$tipo_crecim, 'Verificar Tipo Crecimiento'),
-                            need(input$crecimiento, 'Verificar Crecimiento'),
-                            need(input$gastos_internos, 'Verificar Gastos Internos'),
-                            need(input$gastos_externos, 'Verificar Gastos Externos'),
-                            need(input$numero_primas, 'Verificar Numero Primas'),
-                            need(input$temporalidad, 'Verificar Temporalidad'),
-                            need(input$seleccion_frac, 'Verificar Seleccion Fraccion'),
-                            need(input$fraccion, 'Verificar Fraccion'),
-                            need(input$temporalidad_frac, 'Verificar Temporalidad Fraccion'),
-                            need(input$tipo_seguro, 'Verificar Tipop Seguro'),
-
-                   )
-
-                   try({Edad = input$edad})
-                   try({Sexo = input$sexo})
-                   try({Tipo_interes = input$tipo_interes})
-                   try({Duracion = input$duracion})
-                   try({Cuantia = input$cuantia})
-                   try({Tipo_crecimiento = input$tipo_crecim})
-                   try({Crecimiento = input$crecimiento})
-                   try({Gastos_internos = input$gastos_internos})
-                   try({Gastos_externos = input$gastos_externos})
-                   try({Numero_primas = input$numero_primas})
-                   try({Temporalidad = input$temporalidad})
-                   try({Seleccion_frac = input$seleccion_frac})
-                   try({Fraccion = input$fraccion})
-                   try({Temporalidad_frac = input$temporalidad_frac})
-                   try({Tipo_seguro = input$tipo_seguro})
-                   
+                   # validate(need(input$edad, 'Verificar Edad'),
+                   #          need(input$sexo, 'Verificar Sexo'),
+                   #          need(input$tipo_interes, 'Verificar Tipo Interes'),
+                   #          need(input$duracion, 'Verificar Duracion'),
+                   #          need(input$cuantia, 'Verificar Cuantia'),
+                   #          need(input$tipo_crecim, 'Verificar Tipo Crecimiento'),
+                   #          need(input$crecimiento, 'Verificar Crecimiento'),
+                   #          need(input$gastos_internos, 'Verificar Gastos Internos'),
+                   #          need(input$gastos_externos, 'Verificar Gastos Externos'),
+                   #          need(input$numero_primas, 'Verificar Numero Primas'),
+                   #          need(input$temporalidad, 'Verificar Temporalidad'),
+                   #          need(input$seleccion_frac, 'Verificar Seleccion Fraccion'),
+                   #          need(input$fraccion, 'Verificar Fraccion'),
+                   #          need(input$temporalidad_frac, 'Verificar Temporalidad Fraccion'),
+                   #          need(input$tipo_seguro, 'Verificar Tipop Seguro'),
+                   # 
+                   # )
+                   # 
+                   # try({Edad = input$edad})
+                   # try({Sexo = input$sexo})
+                   # try({Tipo_interes = input$tipo_interes})
+                   # try({Duracion = input$duracion})
+                   # try({Cuantia = input$cuantia})
+                   # try({Tipo_crecimiento = input$tipo_crecim})
+                   # try({Crecimiento = input$crecimiento})
+                   # try({Gastos_internos = input$gastos_internos})
+                   # try({Gastos_externos = input$gastos_externos})
+                   # try({Numero_primas = input$numero_primas})
+                   # try({Temporalidad = input$temporalidad})
+                   # try({Seleccion_frac = input$seleccion_frac})
+                   # try({Fraccion = input$fraccion})
+                   # try({Temporalidad_frac = input$temporalidad_frac})
+                   # try({Tipo_seguro = input$tipo_seguro})
+                   # 
                    # calculos = calculo_producto(producto,Edad,Sexo,Tipo_interes,Duracion,Cuantia,
                    #                             Tipo_crecimiento,Crecimiento,Gastos_internos,
                    #                             Gastos_externos, Numero_primas,Temporalidad,
