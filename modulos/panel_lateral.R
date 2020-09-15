@@ -21,6 +21,10 @@ PanelLateralUI = function(id){
         column(6,
                # Tipo de Seguro
                uiOutput(outputId = ns("wid_tipo_seguro")),
+               
+               #........................................................
+               # Widgets COMUNES ---------------------------------------
+               #........................................................
                # Fecha de Nacimiento 
                dateInput(inputId = ns('edad'), 
                          label = 'Fecha de nacimiento:', 
@@ -46,27 +50,6 @@ PanelLateralUI = function(id){
                            ticks = TRUE, 
                            animate = FALSE, 
                            width='90%'),
-               # Duracion Prestacion
-               numericInput(inputId = ns('duracion'), 
-                            label = 'Duración de Prestación (años)', 
-                            value = NA, min = 1, max = 95, step = NA, width='90%'),
-               # Cuantia
-               numericInput(inputId = ns('cuantia'), 
-                            label = 'Cuantía:', 
-                            value = NA, min = 0, step = NA, width='90%'),
-               # Crecimiento Prestacion
-               selectInput(inputId = ns('tipo_crecim'),
-                           label='Tipo de crecimiento',
-                           choices = c('Geométrico' = 'Geometrico', 
-                                       'Aritmético' = 'Aritmetico'),
-                           selected = 1, width='90%'),
-               # Actualizar en Server segun tipo:
-               uiOutput(outputId = ns("wid_crecimiento"))
-               
-        ),
-        
-        # Columna 2 ............................................
-        column(6,
                
                # Gastos Internos
                sliderInput(inputId = ns('gasto_int'), 
@@ -90,21 +73,21 @@ PanelLateralUI = function(id){
                            locale = "us", 
                            ticks = TRUE, animate = FALSE, 
                            width='90%'),
-               # Numero de Primas
-               # numericInput(inputId = ns('numero_primas'), 
-               #              label = 'Número de Primas a Pagar:', 
-               #              value = 1, min = 1, max = NA, step = NA, width='90%'),
-               # Temporalidad
-               # selectInput(inputId = ns('temporalidad'),
-               #             label='Temporalidad de Primas',
-               #             choices = c('Mensual',
-               #                         'Trimestral',
-               #                         'Semestral',
-               #                         'Anual'), 
-               #             width='90%'),
                
+               # Cuantia
+               numericInput(inputId = ns('cuantia'), 
+                            label = 'Cuantía:', 
+                            value = NA, min = 0, step = NA, width='90%')
+               
+               
+        ),
+        
+        # Columna 2 ............................................
+        column(6,
+               
+               # Duracion Prestacion
+               uiOutput(outputId = ns("wid_duracion")),
                # Fraccionar
-               hr(),
                selectInput(inputId = ns('tipo_fraccion'),
                            label='Desea Fraccionar:',
                            choices = c('Si',
@@ -115,7 +98,18 @@ PanelLateralUI = function(id){
                # Actualizar Widget Temporalidad
                uiOutput(outputId = ns("wid_temporalidad")),
                # Actualizar Widget Cantidad Fraccion
-               uiOutput(outputId = ns("wid_fraccion"))
+               uiOutput(outputId = ns("wid_fraccion")),
+               hr(),
+               
+               
+               # Crecimiento Prestacion
+               uiOutput(outputId = ns("wid_tipo_crecim")),
+               
+               # Actualizar en Server segun tipo:
+               uiOutput(outputId = ns("wid_crecimiento")),
+               
+               # Diferimiento en Anios
+               uiOutput(outputId = ns("wid_diferido"))
         )
       )
       
@@ -144,22 +138,58 @@ PanelLateralServer = function(id,producto){
                  # Actualizar Widget Tipo Seguro  ..........................
                  output$wid_tipo_seguro = renderUI({
                    ns = session$ns
-                   widg_tipo_seg = switch(producto,
-                                       '1_fallecimiento' = {
-                                         selectInput(inputId = ns('tipo_seguro'),
-                                                     label='Tipo Seguro:',
-                                                     choices = c('Entera',
-                                                                 'Temporal'), 
-                                                     width='90%')
-                                       }
-                   )
+                   if(producto == '1_fallecimiento'|producto=='1_diferido'){
+                     widg_tipo_seg = selectInput(inputId = ns('tipo_seguro'),
+                                                 label='Tipo Seguro:',
+                                                 choices = c('Entera',
+                                                             'Temporal'), 
+                                                 width='90%')
+                   }else{
+                     widg_tipo_seg = NULL
+                   }
                    return(widg_tipo_seg)
                  })
                  
-                 # Actulizar Tipo Crecimiento    ......................................
+                 # Actualizar Widget Duracion  ..........................
+                 output$wid_duracion = renderUI({
+                   ns = session$ns
+                   Tipo_seguro = input$tipo_seguro
+                   if(is.null(Tipo_seguro)) Tipo_seguro = 'Temporal'
+                   if(Tipo_seguro=='Temporal'){
+                     wid_dura = numericInput(inputId = ns('duracion'), 
+                                             label = 'Duración de Prestación (años)', 
+                                             value = NA, min = 1, max = 95, step = NA, width='90%')
+                   }else{
+                     wid_dura = NULL
+                   }
+                   
+                   return(wid_dura)
+                 })
+                 
+                 
+                 # Actualizar Tipo Crecimiento  .................................
+                 output$wid_tipo_crecim = renderUI({
+                   ns = session$ns
+                   if(producto=='1_cuantia_variable'){
+                     wid_tipo_creci = selectInput(inputId = ns('tipo_crecim'),
+                                                  label='Tipo de crecimiento',
+                                                  choices = c('Geométrico' = 'Geometrico', 
+                                                              'Aritmético' = 'Aritmetico'),
+                                                  selected = 1, width='90%')
+                   }else{
+                     wid_tipo_creci = NULL
+                   }
+                   
+                   return(wid_tipo_creci)
+                 })
+                 
+                 
+                 # Actulizar Crecimiento    ......................................
                  output$wid_crecimiento = renderUI({
                    ns = session$ns
-                   widg_crecim = switch(input$tipo_crecim,
+                   try({Tipo_crecim = input$tipo_crecim})
+                   if(is.null(Tipo_crecim)) Tipo_crecim = 'NO ES CUANTIA VARIABLE'
+                   widg_crecim = switch(Tipo_crecim,
                                         'Geometrico' = {
                                           sliderInput(inputId = ns('crecimiento'), 
                                                       label = 'Crecimiento de la Prestación:', 
@@ -184,18 +214,18 @@ PanelLateralServer = function(id,producto){
                  output$wid_temporalidad = renderUI({
                    ns = session$ns
                    widg_tempo = switch(input$tipo_fraccion,
-                                        'Si' = {
-                                          selectInput(inputId = ns('temporalidad'),
-                                                      label='Temporalidad de Primas:',
-                                                      choices = c('Mensual',
-                                                                  'Trimestral',
-                                                                  'Semestral',
-                                                                  'Anual'), 
-                                                      width='90%')
-                                        },
-                                        'No' = {
-                                          br()
-                                        }
+                                       'Si' = {
+                                         selectInput(inputId = ns('temporalidad'),
+                                                     label='Temporalidad de Primas:',
+                                                     choices = c('Mensual',
+                                                                 'Trimestral',
+                                                                 'Semestral',
+                                                                 'Anual'), 
+                                                     width='90%')
+                                       },
+                                       'No' = {
+                                         NULL
+                                       }
                    )
                    return(widg_tempo)
                  })
@@ -211,15 +241,31 @@ PanelLateralServer = function(id,producto){
                                                        value = 1 , min = 1, width='90%')
                                         },
                                         'No' = {
-                                          br()
+                                          NULL
                                         }
                    )
                    return(widg_crecim)
                  })
                  
+                 # Actualizar Widget Diferimiento  ..........................
+                 output$wid_diferido = renderUI({
+                   ns = session$ns
+                   if(producto=='1_diferido'){
+                     wid_difer = numericInput(inputId = ns('diferido'), 
+                                              label = 'Diferimiento (años)', 
+                                              value = NA, min = 1, max = 95, step = NA, width='90%')
+                   }else{
+                     wid_difer = NULL
+                   }
+                   
+                   return(wid_difer)
+                 })
                  
                  
-                 # PRODUCTOS (switch cases) ...................................................
+                 
+                 #............................................................................
+                 # PRODUCTOS (switch cases) ..................................................
+                 #............................................................................
                  resultado = reactive({
                    
                    try({Edad = input$edad})
@@ -237,14 +283,14 @@ PanelLateralServer = function(id,producto){
                    try({Fraccion = input$fraccion})
                    # try({Temporalidad_frac = input$temporalidad_frac})
                    try({Tipo_seguro = input$tipo_seguro}) 
-
+                   
                    # calculos = calculo_producto(producto,Edad,Sexo,Tipo_interes,Duracion,Cuantia,
                    #                             Tipo_crecimiento,Crecimiento,Gastos_internos,
                    #                             Gastos_externos, Numero_primas,Temporalidad,
                    #                             Seleccion_frac,Fraccion,Temporalidad_frac,
                    #                             Tipo_seguro)
                    calculos = calculo_producto(producto = producto,
-                                               Edad = Edad, Sexo=Sexo,
+                                               Edad = Edad, Sexo = Sexo,
                                                Tipo_interes = Tipo_interes,
                                                Duracion = Duracion,
                                                Cuantia = Cuantia,
@@ -252,11 +298,9 @@ PanelLateralServer = function(id,producto){
                                                Crecimiento = Crecimiento,
                                                Gastos_internos = Gastos_internos,
                                                Gastos_externos = Gastos_externos,
-                                               # Numero_primas = Numero_primas,
                                                Temporalidad = Temporalidad,
                                                Seleccion_frac = Seleccion_frac,
                                                Fraccion = Fraccion,
-                                               # Temporalidad_frac = Temporalidad_frac,
                                                Tipo_seguro = Tipo_seguro)
                    # calculos = calculo_producto(producto,Edad)
                    return(calculos)
