@@ -219,8 +219,7 @@ PanelLateralServer = function(id,producto){
                                                      label='Temporalidad de Primas:',
                                                      choices = c('Mensual',
                                                                  'Trimestral',
-                                                                 'Semestral',
-                                                                 'Anual'), 
+                                                                 'Semestral'), 
                                                      width='90%')
                                        },
                                        'No' = {
@@ -267,22 +266,40 @@ PanelLateralServer = function(id,producto){
                  # PRODUCTOS (switch cases) ..................................................
                  #............................................................................
                  resultado = reactive({
+                   try({Tipo_seguro = input$tipo_seguro}) 
                    
-                   try({Edad = input$edad})
+                   try({
+                     Edad = input$edad
+                     Edad = age(as.Date(Edad))
+                   })
                    try({Sexo = input$sexo})
-                   try({Tipo_interes = input$tipo_interes})
+                   try({Tipo_interes = input$tipo_interes/100})
                    try({Duracion = input$duracion})
                    try({Cuantia = input$cuantia})
+                   
                    try({Tipo_crecimiento = input$tipo_crecim})
-                   try({Crecimiento = input$crecimiento})
-                   try({Gastos_internos = input$gasto_int})
-                   try({Gastos_externos = input$gasto_ext})
+                   try({
+                     Crecimiento = NULL
+                     if(Tipo_crecimiento == 'Geometrico') Crecimiento = input$crecimiento/100
+                     if(Tipo_crecimiento == 'Aritmetico') Crecimiento = input$crecimiento
+                     })
+                   
+                   try({Gastos_internos = input$gasto_int/100})
+                   try({Gastos_externos = input$gasto_ext/100})
                    # try({Numero_primas = input$numero_primas}) # Se calcula con fraccionamiento
-                   try({Temporalidad = input$temporalidad})
+                   
                    try({Seleccion_frac = input$tipo_fraccion})
+                   try({
+                     aux = input$temporalidad
+                     if(is.null(aux)) aux = 'Sin Fraccion'
+                     Temporalidad = switch (aux,
+                       'Mensual' = 12,
+                       'Trimestral' = 4,
+                       'Semestral' = 2
+                     )
+                   })
                    try({Fraccion = input$fraccion})
-                   # try({Temporalidad_frac = input$temporalidad_frac})
-                   try({Tipo_seguro = input$tipo_seguro}) 
+                   
                    
                    # calculos = calculo_producto(producto,Edad,Sexo,Tipo_interes,Duracion,Cuantia,
                    #                             Tipo_crecimiento,Crecimiento,Gastos_internos,

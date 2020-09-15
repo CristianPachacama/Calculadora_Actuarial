@@ -1,11 +1,13 @@
 library(shiny)
 library(shinyjs)
+library(lubridate)
 library(lifecontingencies)
 
 load('datos/tablas_listas.RData')
 source(file = 'modulos/panel_lateral.R')
 # source(file = 'codigo/calculos.R')
 source(file = 'codigo/calculos_testeo.R')
+source(file = 'codigo/extras.R')
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # Define UI -------------------------------------------
