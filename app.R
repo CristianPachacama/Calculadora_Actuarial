@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyjs)
 library(lifecontingencies)
 
 load('datos/tablas_listas.RData')
@@ -37,13 +38,8 @@ ui = navbarPage("Calculadora Actuarial", id="nav",
                            # Fallecimiento ...........................
                            tabPanel("Fallecimiento",
                                     # SALIDAS RESULTADOS  ............
-                                    selectInput('tipo_seguro',
-                                                label = 'Tipo de Seguro:',
-                                                choices = c('Entera','Temporal'),
-                                                selected = 'Entera'),
-                                    # Actualizar Widget cobertura
-                                    # uiOutput(outputId = "cobertura"),
                                     verbatimTextOutput(outputId = 'resp_panel_1_1'),
+                                    
                                     # PANEL DE PARAMETROS ............
                                     PanelLateralUI('panel_1_1')
                                     
@@ -66,6 +62,26 @@ ui = navbarPage("Calculadora Actuarial", id="nav",
                                     
                                     # PANEL DE PARAMETROS ............
                                     PanelLateralUI('panel_1_3')
+                                    
+                           ),
+                           # Diferido  ..............................
+                           tabPanel("Diferido",
+                                    
+                                    # SALIDAS RESULTADOS  ............
+                                    verbatimTextOutput(outputId = 'resp_panel_1_4'),
+                                    
+                                    # PANEL DE PARAMETROS ............
+                                    PanelLateralUI('panel_1_4')
+                                    
+                           ),
+                           # Cuantia Variable   .......................
+                           tabPanel("Cuantía Variable",
+                                    
+                                    # SALIDAS RESULTADOS  ............
+                                    verbatimTextOutput(outputId = 'resp_panel_1_5'),
+                                    
+                                    # PANEL DE PARAMETROS ............
+                                    PanelLateralUI('panel_1_5')
                                     
                            )
                 ),
@@ -127,6 +143,8 @@ server = function(input, output, session) {
     calc_panel_1_1 = PanelLateralServer('panel_1_1',producto='1_fallecimiento')
     calc_panel_1_2 = PanelLateralServer('panel_1_2',producto='1_supervivencia')
     calc_panel_1_3 = PanelLateralServer('panel_1_3',producto='1_mixto')
+    calc_panel_1_4 = PanelLateralServer('panel_1_4',producto='1_diferido')
+    calc_panel_1_5 = PanelLateralServer('panel_1_5',producto='1_cuantia_variable')
     
     # Calculos de Rentas
     calc_panel_2_1 = PanelLateralServer('panel_2_1',producto='2_prepagables')
@@ -142,7 +160,13 @@ server = function(input, output, session) {
     output$resp_panel_1_3 = renderPrint({
         calc_panel_1_3()
     })
-    # ...
+    output$resp_panel_1_4 = renderPrint({
+        calc_panel_1_4()
+    })
+    output$resp_panel_1_5 = renderPrint({
+        calc_panel_1_5()
+    })
+    # ..................................
     output$resp_panel_2_1 = renderPrint({
         calc_panel_2_1()
     })
