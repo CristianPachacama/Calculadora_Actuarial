@@ -3,121 +3,134 @@
 # Define UI -------------------------------------------
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-PanelLateralUI = function(id){
+PanelLateralUI = function(id, titulo="Titulo_Pestania"){
   
   ns = NS(id)
-  
+  #............................................................
   # Panel Lateral .............................................
-  absolutePanel(
-    top = 70, right = 50, width = 600, height = 180,
-    draggable = TRUE, fixed = FALSE,
-    wellPanel(
-      # Titulo Panel
-      h3('Parámetros',align='center'),
-      hr(),
-      # PARAMETROS
-      
-      fluidRow(
-        column(6,
-               # Tipo de Seguro
-               uiOutput(outputId = ns("wid_tipo_seguro")),
+  #............................................................
+  tabPanel(titulo,
+           fluidRow(
+             # PANEL DE PARAMETROS ............
+             sidebarPanel(
+               fluidRow(
+                 column(6,
+                        # Tipo de Seguro
+                        uiOutput(outputId = ns("wid_tipo_seguro")),
+                        
+                        
+                        # Widgets COMUNES ................................
+                        
+                        # Fecha de Nacimiento 
+                        dateInput(inputId = ns('edad'),
+                                  label = 'Fecha de nacimiento:', 
+                                  value = as.character(Sys.Date()-18*365), 
+                                  min = as.character(Sys.Date()-98*365), 
+                                  max = as.character(Sys.Date()-18*365), 
+                                  format = "yyyy-mm-dd", 
+                                  startview = "year", 
+                                  weekstart = 0, language = "es", width='90%'),
+                        # Sexo
+                        radioButtons(inputId = ns('sexo'),
+                                     label = 'Sexo:', 
+                                     choices = c('Hombre','Mujer'), 
+                                     selected = NULL, width='90%'),
+                        # Tipo de interes
+                        sliderInput(inputId = ns('tipo_interes'), 
+                                    label = 'Tipo de interés', 
+                                    min = 0, max = 100, 
+                                    value = 6, 
+                                    step = 0.1, round = FALSE, 
+                                    format = "#,##0.#####", 
+                                    post  = " %",
+                                    locale = "us", 
+                                    ticks = TRUE, 
+                                    animate = FALSE, 
+                                    width='90%'),
+                        
+                        # Gastos Internos
+                        sliderInput(inputId = ns('gasto_int'), 
+                                    label = 'Gastos Internos', 
+                                    min = 0, max = 100, 
+                                    value = 4, 
+                                    step = 0.1, round = FALSE, 
+                                    format = "#,##0.#####", 
+                                    post  = " %",
+                                    locale = "us", 
+                                    ticks = TRUE, animate = FALSE, 
+                                    width='90%'),
+                        # Gastos Internos
+                        sliderInput(inputId = ns('gasto_ext'), 
+                                    label = 'Gastos Externos', 
+                                    min = 0, max = 100, 
+                                    value = 4, 
+                                    step = 0.1, round = FALSE, 
+                                    format = "#,##0.#####", 
+                                    post  = " %",
+                                    locale = "us", 
+                                    ticks = TRUE, animate = FALSE, 
+                                    width='90%'),
+                        
+                        # Cuantia
+                        numericInput(inputId = ns('cuantia'), 
+                                     label = 'Cuantía:', 
+                                     value = 1000, min = 0, step = NA, width='90%')
+                        
+                        
+                 ),
+                 
+                 # Columna 2 ............................................
+                 column(6,
+                        
+                        # Duracion Prestacion
+                        uiOutput(outputId = ns("wid_duracion")),
+                        # Fraccionar
+                        selectInput(inputId = ns('tipo_fraccion'),
+                                    label='Desea Fraccionar:',
+                                    choices = c('Si',
+                                                'No'),
+                                    selected = 'No',
+                                    width='90%'),
+                        
+                        # Actualizar Widget Temporalidad
+                        uiOutput(outputId = ns("wid_temporalidad")),
+                        # Actualizar Widget Cantidad Fraccion
+                        uiOutput(outputId = ns("wid_fraccion")),
+                        hr(),
+                        
+                        
+                        # Crecimiento Prestacion
+                        uiOutput(outputId = ns("wid_tipo_crecim")),
+                        
+                        # Actualizar en Server segun tipo:
+                        uiOutput(outputId = ns("wid_crecimiento")),
+                        
+                        # Diferimiento en Anios
+                        uiOutput(outputId = ns("wid_diferido"))
+                 )
+               )
                
-               #........................................................
-               # Widgets COMUNES ---------------------------------------
-               #........................................................
-               # Fecha de Nacimiento 
-               dateInput(inputId = ns('edad'),
-                         label = 'Fecha de nacimiento:', 
-                         value = as.character(Sys.Date()-18*365), 
-                         min = as.character(Sys.Date()-98*365), 
-                         max = as.character(Sys.Date()-18*365), 
-                         format = "yyyy-mm-dd", 
-                         startview = "year", 
-                         weekstart = 0, language = "es", width='90%'),
-               # Sexo
-               radioButtons(inputId = ns('sexo'),
-                            label = 'Sexo:', 
-                            choices = c('Hombre','Mujer'), 
-                            selected = NULL, width='90%'),
-               # Tipo de interes
-               sliderInput(inputId = ns('tipo_interes'), 
-                           label = 'Tipo de interés', 
-                           min = 0, max = 100, 
-                           value = 6, 
-                           step = 0.1, round = FALSE, 
-                           format = "#,##0.#####", 
-                           post  = " %",
-                           locale = "us", 
-                           ticks = TRUE, 
-                           animate = FALSE, 
-                           width='90%'),
-               
-               # Gastos Internos
-               sliderInput(inputId = ns('gasto_int'), 
-                           label = 'Gastos Internos', 
-                           min = 0, max = 100, 
-                           value = 4, 
-                           step = 0.1, round = FALSE, 
-                           format = "#,##0.#####", 
-                           post  = " %",
-                           locale = "us", 
-                           ticks = TRUE, animate = FALSE, 
-                           width='90%'),
-               # Gastos Internos
-               sliderInput(inputId = ns('gasto_ext'), 
-                           label = 'Gastos Externos', 
-                           min = 0, max = 100, 
-                           value = 4, 
-                           step = 0.1, round = FALSE, 
-                           format = "#,##0.#####", 
-                           post  = " %",
-                           locale = "us", 
-                           ticks = TRUE, animate = FALSE, 
-                           width='90%'),
-               
-               # Cuantia
-               numericInput(inputId = ns('cuantia'), 
-                            label = 'Cuantía:', 
-                            value = 1000, min = 0, step = NA, width='90%')
-               
-               
-        ),
-        
-        # Columna 2 ............................................
-        column(6,
-               
-               # Duracion Prestacion
-               uiOutput(outputId = ns("wid_duracion")),
-               # Fraccionar
-               selectInput(inputId = ns('tipo_fraccion'),
-                           label='Desea Fraccionar:',
-                           choices = c('Si',
-                                       'No'),
-                           selected = 'No',
-                           width='90%'),
-               
-               # Actualizar Widget Temporalidad
-               uiOutput(outputId = ns("wid_temporalidad")),
-               # Actualizar Widget Cantidad Fraccion
-               uiOutput(outputId = ns("wid_fraccion")),
-               hr(),
-               
-               
-               # Crecimiento Prestacion
-               uiOutput(outputId = ns("wid_tipo_crecim")),
-               
-               # Actualizar en Server segun tipo:
-               uiOutput(outputId = ns("wid_crecimiento")),
-               
-               # Diferimiento en Anios
-               uiOutput(outputId = ns("wid_diferido"))
-        )
-      )
-      
-      
-    ),
-    style = "opacity: 0.9"
+             ),
+             
+             #............................................................
+             # Panel Principal ...........................................
+             #............................................................
+             mainPanel(
+               fluidRow(
+                 infoBoxOutput(outputId = ns('box_prima_pura'))#,
+                 # infoBoxOutput(outputId = ns('box_prima_inventario')),
+                 # infoBoxOutput(outputId = ns('box_prima_comercial')),
+                 # infoBoxOutput(outputId = ns('box_prima_nivelada')),
+                 # infoBoxOutput(outputId = ns('box_prima_pura'))
+               ),
+               fluidRow(
+                 verbatimTextOutput(outputId = ns('print_resultados'))
+               )
+             )
+           ),hr()
+           
   )
+  
   
   
   
@@ -133,8 +146,7 @@ PanelLateralServer = function(id,producto){
   
   moduleServer(id,
                
-               # Empieza Servidor Modulo  .............................................
-               
+               # Empieza Servidor Modulo  ..................................
                function(input,output,session){
                  
                  # Actualizar Widget Tipo Seguro  ..........................
@@ -265,7 +277,7 @@ PanelLateralServer = function(id,producto){
                  
                  
                  #............................................................................
-                 # PARANETROS Y CALCULOS .....................................................
+                 # PARAMETROS Y CALCULOS .....................................................
                  #............................................................................
                  resultado = reactive({
                    try({Tipo_seguro = input$tipo_seguro}) 
@@ -305,11 +317,9 @@ PanelLateralServer = function(id,producto){
                    
                    try({Diferido = input$diferido})
                    
-                   # calculos = calculo_producto(producto,Edad,Sexo,Tipo_interes,Duracion,Cuantia,
-                   #                             Tipo_crecimiento,Crecimiento,Gastos_internos,
-                   #                             Gastos_externos, Numero_primas,Temporalidad,
-                   #                             Seleccion_frac,Fraccion,Temporalidad_frac,
-                   #                             Tipo_seguro)
+                   #............................................................
+                   # Ejecucion Calculos ........................................
+                   #............................................................
                    calculos = calculo_producto(producto = producto,
                                                Edad = Edad, Sexo = Sexo,
                                                Tipo_interes = Tipo_interes,
@@ -327,6 +337,46 @@ PanelLateralServer = function(id,producto){
                    # calculos = calculo_producto(producto,Edad)
                    return(calculos)
                  })
+                 
+                 #................................................
+                 # Print Resultados ..............................
+                 #................................................
+                 output$print_resultados = renderPrint({
+                   resultado()
+                 })
+                 
+                 
+                 #................................................
+                 # Visualizaciones ...............................
+                 #................................................
+                 output$box_prima_pura = renderInfoBox({
+                   l_primas = resultado()
+                   infoBox(title = "Prima Pura", fill = TRUE,
+                           value = round(l_primas$prima_pura,2),
+                           icon = icon('credit-card'),color='blue')
+                 })
+                 #....
+                 output$box_prima_inventario = renderInfoBox({
+                   l_primas = resultado()
+                   infoBox(title = "Prima Inventario", 
+                           value = round(l_primas$prima_inventario,2),
+                           icon = icon('list'),color='blue')
+                 })
+                 #....
+                 output$box_prima_comercial = renderInfoBox({
+                   l_primas = resultado()
+                   infoBox(title = "Prima Comercial", 
+                           value = round(l_primas$prima_comercial,2),
+                           icon = icon('list'),color='blue')
+                 })
+                 #....
+                 output$box_prima_nivelada = renderInfoBox({
+                   l_primas = resultado()
+                   infoBox(title = "Prima Nivelada", 
+                           value = round(l_primas$prima_nivelada,2),
+                           icon = icon('list'),color='blue')
+                 })
+                 
                  
                  return(resultado)
                  

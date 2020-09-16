@@ -1,6 +1,7 @@
 library(shiny)
 # library(shinyjs)
 library(shinythemes)
+library(shinydashboard)
 library(lubridate)
 library(lifecontingencies)
 
@@ -34,85 +35,43 @@ source(file = 'codigo/extras.R',local = T)
 #     
 
 
-ui = navbarPage("Calculadora Actuarial", id="nav",theme = shinytheme("flatly"),
+ui = navbarPage(title ="Calculadora Actuarial", id="calculadora",
+                header = tags$h2(" - ",tags$head(tags$link(rel='shortcut icon', 
+                                                           href='epn.ico', 
+                                                           type='image/x-icon'))),
+                position = "fixed-top",theme=shinytheme('flatly'),#theme = 'estilo.css',
+                footer = fluidRow(column(12,img(src='epn_logo.png',width='30px',align='center'),
+                                         tags$b('Proyecto: '),' "Calculadora Actuarial".' ,
+                                         '-',tags$a('Facultad de Ciencias - Ingenieria Matemática - EPN (2020)',href='http://www.epn.edu.ec'),
+                                         tags$b('  ||  '),tags$b('Desarrollado por: '),
+                                         tags$a('Isabel Zambrano',href='http://www.linkedin.com/')
+                )
+                ),
+                
                 
                 # Seguros de Vida -----------------------------------------------
                 navbarMenu("Seguros de  Vida",
                            # Fallecimiento ...........................
-                           tabPanel("Fallecimiento",
-                                    # SALIDAS RESULTADOS  ............
-                                    verbatimTextOutput(outputId = 'resp_panel_1_1'),
-                                    
-                                    # PANEL DE PARAMETROS ............
-                                    PanelLateralUI('panel_1_1')
-                                    
-                           ),
+                           PanelLateralUI('panel_1_1',titulo='Fallecimiento'),
                            # Supervivencia  ..............................
-                           tabPanel("Superviviencia",
-                                    
-                                    # SALIDAS RESULTADOS  ............
-                                    verbatimTextOutput(outputId = 'resp_panel_1_2'),
-                                    
-                                    # PANEL DE PARAMETROS ............
-                                    PanelLateralUI('panel_1_2')
-                                    
-                           ),
+                           PanelLateralUI('panel_1_2',titulo='Superviviencia'),
                            # Mixto  ..............................
-                           tabPanel("Mixto",
-                                    
-                                    # SALIDAS RESULTADOS  ............
-                                    verbatimTextOutput(outputId = 'resp_panel_1_3'),
-                                    
-                                    # PANEL DE PARAMETROS ............
-                                    PanelLateralUI('panel_1_3')
-                                    
-                           ),
+                           PanelLateralUI('panel_1_3',titulo='Mixto'),
                            # Diferido  ..............................
-                           tabPanel("Diferido",
-                                    
-                                    # SALIDAS RESULTADOS  ............
-                                    verbatimTextOutput(outputId = 'resp_panel_1_4'),
-                                    
-                                    # PANEL DE PARAMETROS ............
-                                    PanelLateralUI('panel_1_4')
-                                    
-                           ),
+                           PanelLateralUI('panel_1_4',titulo='Diferido'),
                            # Cuantia Variable   .......................
-                           tabPanel("Cuantía Variable",
-                                    
-                                    # SALIDAS RESULTADOS  ............
-                                    verbatimTextOutput(outputId = 'resp_panel_1_5'),
-                                    
-                                    # PANEL DE PARAMETROS ............
-                                    PanelLateralUI('panel_1_5')
-                                    
-                           )
+                           PanelLateralUI('panel_1_5',titulo='Cuantía Variable')
+                           
                 ),
                 
                 # Rentas  --------------------------------------
                 navbarMenu("Rentas",
                            # Prepagables .......................
-                           tabPanel("Prepagables",
-                                    # SALIDAS RESULTADOS  ............
-                                    verbatimTextOutput(outputId = 'resp_panel_2_1'),
-                                    
-                                    # PANEL DE PARAMETROS ............
-                                    PanelLateralUI('panel_2_1')
-                                    
-                           ),
-                           
+                           PanelLateralUI('panel_2_1',titulo='Prepagables'),
                            # Pospagables .......................
-                           tabPanel("Pospagables",
-                                    # SALIDAS RESULTADOS  ............
-                                    verbatimTextOutput(outputId = 'resp_panel_2_2'),
-                                    
-                                    # PANEL DE PARAMETROS ............
-                                    PanelLateralUI('panel_2_2')
-                                    
-                           )
+                           PanelLateralUI('panel_2_2',titulo='Pospagables')
+                           
                 )
-                
-                
                 
 )
 
@@ -124,58 +83,17 @@ ui = navbarPage("Calculadora Actuarial", id="nav",theme = shinytheme("flatly"),
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 server = function(input, output, session) {
     
-    # Actulizar Tipo Seguro  .......................
-    # output$cobertura = renderUI({
-    #     
-    #     widg_cobertura = switch(input$tipo_seguro,
-    #                          'Entera' = {
-    #                              br()
-    #                          },
-    #                          'Temporal' = {
-    #                              numericInput(inputId = 'cobertura',
-    #                                           label = 'Valor cobertura',
-    #                                           value = 0 , min = 0)
-    #                          }
-    #     )
-    #     return(widg_cobertura)
-    # })
-    
-    
-    
     # Calculos Seguros de Vida ..........
-    calc_panel_1_1 = PanelLateralServer('panel_1_1',producto='1_fallecimiento')
-    calc_panel_1_2 = PanelLateralServer('panel_1_2',producto='1_supervivencia')
-    calc_panel_1_3 = PanelLateralServer('panel_1_3',producto='1_mixto')
-    calc_panel_1_4 = PanelLateralServer('panel_1_4',producto='1_diferido')
-    calc_panel_1_5 = PanelLateralServer('panel_1_5',producto='1_cuantia_variable')
+    PanelLateralServer('panel_1_1',producto='1_fallecimiento')
+    PanelLateralServer('panel_1_2',producto='1_supervivencia')
+    PanelLateralServer('panel_1_3',producto='1_mixto')
+    PanelLateralServer('panel_1_4',producto='1_diferido')
+    PanelLateralServer('panel_1_5',producto='1_cuantia_variable')
     
     # Calculos de Rentas
-    calc_panel_2_1 = PanelLateralServer('panel_2_1',producto='2_prepagables')
-    calc_panel_2_2 = PanelLateralServer('panel_2_2',producto='2_pospagables')
+    PanelLateralServer('panel_2_1',producto='2_prepagables')
+    PanelLateralServer('panel_2_2',producto='2_pospagables')
     
-    # Renders ..........................
-    output$resp_panel_1_1 = renderPrint({
-        calc_panel_1_1()
-    })
-    output$resp_panel_1_2 = renderPrint({
-        calc_panel_1_2()
-    })
-    output$resp_panel_1_3 = renderPrint({
-        calc_panel_1_3()
-    })
-    output$resp_panel_1_4 = renderPrint({
-        calc_panel_1_4()
-    })
-    output$resp_panel_1_5 = renderPrint({
-        calc_panel_1_5()
-    })
-    # ..................................
-    output$resp_panel_2_1 = renderPrint({
-        calc_panel_2_1()
-    })
-    output$resp_panel_2_2 = renderPrint({
-        calc_panel_2_2()
-    })
 }
 
 
