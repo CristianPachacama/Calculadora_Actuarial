@@ -1,151 +1,11 @@
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# Define UI -------------------------------------------
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-PanelLateralUI = function(id, titulo="Titulo_Pestania"){
-  
-  ns = NS(id)
-  #............................................................
-  # Panel Lateral .............................................
-  #............................................................
-  tabPanel(titulo,
-           fluidRow(
-             # PANEL DE PARAMETROS ............
-             sidebarPanel(
-               fluidRow(
-                 column(6,
-                        # Tipo de Seguro
-                        uiOutput(outputId = ns("wid_tipo_seguro")),
-                        
-                        
-                        # Widgets COMUNES ................................
-                        
-                        # Fecha de Nacimiento 
-                        dateInput(inputId = ns('edad'),
-                                  label = 'Fecha de nacimiento:', 
-                                  value = as.character(Sys.Date()-18*365), 
-                                  min = as.character(Sys.Date()-98*365), 
-                                  max = as.character(Sys.Date()-18*365), 
-                                  format = "yyyy-mm-dd", 
-                                  startview = "year", 
-                                  weekstart = 0, language = "es", width='90%'),
-                        # Sexo
-                        radioButtons(inputId = ns('sexo'),
-                                     label = 'Sexo:', 
-                                     choices = c('Hombre','Mujer'), 
-                                     selected = NULL, width='90%'),
-                        # Tipo de interes
-                        sliderInput(inputId = ns('tipo_interes'), 
-                                    label = 'Tipo de interés', 
-                                    min = 0, max = 100, 
-                                    value = 6, 
-                                    step = 0.1, round = FALSE, 
-                                    format = "#,##0.#####", 
-                                    post  = " %",
-                                    locale = "us", 
-                                    ticks = TRUE, 
-                                    animate = FALSE, 
-                                    width='90%'),
-                        
-                        # Gastos Internos
-                        sliderInput(inputId = ns('gasto_int'), 
-                                    label = 'Gastos Internos', 
-                                    min = 0, max = 100, 
-                                    value = 4, 
-                                    step = 0.1, round = FALSE, 
-                                    format = "#,##0.#####", 
-                                    post  = " %",
-                                    locale = "us", 
-                                    ticks = TRUE, animate = FALSE, 
-                                    width='90%'),
-                        # Gastos Internos
-                        sliderInput(inputId = ns('gasto_ext'), 
-                                    label = 'Gastos Externos', 
-                                    min = 0, max = 100, 
-                                    value = 4, 
-                                    step = 0.1, round = FALSE, 
-                                    format = "#,##0.#####", 
-                                    post  = " %",
-                                    locale = "us", 
-                                    ticks = TRUE, animate = FALSE, 
-                                    width='90%'),
-                        
-                        # Cuantia
-                        numericInput(inputId = ns('cuantia'), 
-                                     label = 'Cuantía:', 
-                                     value = 1000, min = 0, step = NA, width='90%')
-                        
-                        
-                 ),
-                 
-                 # Columna 2 ............................................
-                 column(6,
-                        
-                        # Duracion Prestacion
-                        uiOutput(outputId = ns("wid_duracion")),
-                        # Fraccionar
-                        selectInput(inputId = ns('tipo_fraccion'),
-                                    label='Desea Fraccionar:',
-                                    choices = c('Si',
-                                                'No'),
-                                    selected = 'No',
-                                    width='90%'),
-                        
-                        # Actualizar Widget Temporalidad
-                        uiOutput(outputId = ns("wid_temporalidad")),
-                        # Actualizar Widget Cantidad Fraccion
-                        uiOutput(outputId = ns("wid_fraccion")),
-                        hr(),
-                        
-                        
-                        # Crecimiento Prestacion
-                        uiOutput(outputId = ns("wid_tipo_crecim")),
-                        
-                        # Actualizar en Server segun tipo:
-                        uiOutput(outputId = ns("wid_crecimiento")),
-                        
-                        # Diferimiento en Anios
-                        uiOutput(outputId = ns("wid_diferido"))
-                 )
-               )
-               
-             ),
-             
-             #............................................................
-             # Panel Principal ...........................................
-             #............................................................
-             mainPanel(
-               fluidRow(
-                 infoBoxOutput(outputId = ns('box_prima_pura'))#,
-                 # infoBoxOutput(outputId = ns('box_prima_inventario')),
-                 # infoBoxOutput(outputId = ns('box_prima_comercial')),
-                 # infoBoxOutput(outputId = ns('box_prima_nivelada')),
-                 # infoBoxOutput(outputId = ns('box_prima_pura'))
-               ),
-               fluidRow(
-                 verbatimTextOutput(outputId = ns('print_resultados'))
-               )
-             )
-           ),hr()
-           
-  )
-  
-  
-  
-  
-  
-}
-
-
-#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # Define server  -------------------------------------
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-PanelLateralServer = function(id,producto){
+ModuloServer = function(id, producto = id){
   
   moduleServer(id,
-               
                # Empieza Servidor Modulo  ..................................
                function(input,output,session){
                  
@@ -266,7 +126,8 @@ PanelLateralServer = function(id,producto){
                    if(producto=='1_diferido'){
                      wid_difer = numericInput(inputId = ns('diferido'), 
                                               label = 'Diferimiento (años)', 
-                                              value = 1, min = 1, max = 95, step = NA, width='90%')
+                                              value = 1, min = 1, max = 95, 
+                                              step = NA, width='90%')
                    }else{
                      wid_difer = NULL
                    }
@@ -280,7 +141,10 @@ PanelLateralServer = function(id,producto){
                  # PARAMETROS Y CALCULOS .....................................................
                  #............................................................................
                  resultado = reactive({
-                   try({Tipo_seguro = input$tipo_seguro}) 
+                   try({
+                     Tipo_seguro = NULL
+                     Tipo_seguro = input$tipo_seguro
+                   }) 
                    
                    try({
                      Edad = input$edad
@@ -292,7 +156,10 @@ PanelLateralServer = function(id,producto){
                    try({Duracion = input$duracion})
                    try({Cuantia = input$cuantia})
                    
-                   try({Tipo_crecimiento = input$tipo_crecim})
+                   try({
+                     Tipo_crecimiento = NULL
+                     Tipo_crecimiento = input$tipo_crecim
+                   })
                    try({
                      Crecimiento = NULL
                      if(Tipo_crecimiento == 'Geometrico') Crecimiento = input$crecimiento/100
@@ -350,31 +217,128 @@ PanelLateralServer = function(id,producto){
                  # Visualizaciones ...............................
                  #................................................
                  output$box_prima_pura = renderInfoBox({
-                   l_primas = resultado()
-                   infoBox(title = "Prima Pura", fill = TRUE,
-                           value = round(l_primas$prima_pura,2),
-                           icon = icon('credit-card'),color='blue')
+                   prima = resultado()$prima_pura
+                   titulo = "Prima Pura"
+                   if(is.null(prima)){
+                     prima = 0; color = 'black'
+                   }else{
+                     color = 'blue'
+                   }
+                   try({
+                     caja = infoBox(title = titulo, fill = TRUE,
+                                    value = round(prima,2),
+                                    icon = icon("stats", lib = "glyphicon"),color=color)
+                   })
+                   return(caja)
                  })
                  #....
                  output$box_prima_inventario = renderInfoBox({
-                   l_primas = resultado()
-                   infoBox(title = "Prima Inventario", 
-                           value = round(l_primas$prima_inventario,2),
-                           icon = icon('list'),color='blue')
+                   prima = resultado()$prima_inventario
+                   titulo = "Prima inventario"
+                   if(is.null(prima)){
+                     prima = 0; color = 'black'
+                   }else{
+                     color = 'purple'
+                   }
+                   try({
+                     caja = infoBox(title = titulo, fill = TRUE,
+                                    value = round(prima,2),
+                                    icon = icon("stats", lib = "glyphicon"),color=color)
+                   })
+                   return(caja)
                  })
                  #....
                  output$box_prima_comercial = renderInfoBox({
-                   l_primas = resultado()
-                   infoBox(title = "Prima Comercial", 
-                           value = round(l_primas$prima_comercial,2),
-                           icon = icon('list'),color='blue')
+                   prima = resultado()$prima_comercial
+                   titulo = "Prima comercial"
+                   if(is.null(prima)){
+                     prima = 0; color = 'black'
+                   }else{
+                     color = 'yellow'
+                   }
+                   try({
+                     caja = infoBox(title = titulo, fill = TRUE,
+                                    value = round(prima,2),
+                                    icon = icon("stats", lib = "glyphicon"),color=color)
+                   })
+                   return(caja)
+                 })
+                 # .............................................
+                 # Primas no fijas .............................
+                 # .............................................
+                 output$box_prima_fraccionada = renderInfoBox({
+                   prima = resultado()$prima_fraccionada
+                   titulo = "Prima fraccionada"
+                   if(is.null(prima)){
+                     prima = 0; color = 'black'
+                   }else{
+                     color = 'blue'
+                   }
+                   try({
+                     caja = infoBox(title = titulo, fill = TRUE,
+                                    value = round(prima,2),
+                                    icon = icon("stats", lib = "glyphicon"),color=color)
+                   })
+                   return(caja)
                  })
                  #....
                  output$box_prima_nivelada = renderInfoBox({
-                   l_primas = resultado()
-                   infoBox(title = "Prima Nivelada", 
-                           value = round(l_primas$prima_nivelada,2),
-                           icon = icon('list'),color='blue')
+                   prima = resultado()$prima_nivelada
+                   titulo = "Prima nivelada"
+                   if(is.null(prima)){
+                     prima = 0; color = 'black'
+                   }else{
+                     color = 'blue'
+                   }
+                   try({
+                     caja = infoBox(title = titulo, fill = TRUE,
+                                    value = round(prima,2),
+                                    icon = icon("stats", lib = "glyphicon"),color=color)
+                   })
+                   return(caja)
+                 })
+                 
+                 
+                 # .............................................
+                 # Grafico Reserva .............................
+                 # .............................................
+                 output$wid_reserva = renderUI({
+                   ns = session$ns
+                   # Parametros
+                   try({
+                     Tipo_seguro = NULL
+                     Tipo_seguro = input$tipo_seguro
+                   })
+                   try({
+                     Seleccion_frac = input$tipo_fraccion
+                   })
+                   if(is.null(Tipo_seguro)) Tipo_seguro = 'Temporal'
+                   
+                   # Wiget de Grafico Reserva ......
+                   if(Tipo_seguro=='Temporal' & Seleccion_frac=='No'){
+                     wid_reser = highchartOutput(ns('graf_reserva'))
+                   }
+                   if(Tipo_seguro=='Entera'){
+                     wid_reser = br()
+                   }
+                   return(wid_reser)
+                 })
+                 
+                 # Grafico Reserva ......................
+                 output$graf_reserva = renderHighchart({
+                   try({
+                     Duracion = NULL
+                     Duracion = input$duracion
+                   })
+                   
+                   df = data.frame(t = 0:Duracion, Reserva = resultado()$reserva )
+                   
+                   hchart(df,type = "area",
+                          hcaes(x = t, y = Reserva),
+                          name = "Reserva",
+                          color = "#1abc9c",
+                          showInLegend = TRUE
+                   )
                  })
                  
                  
@@ -384,3 +348,5 @@ PanelLateralServer = function(id,producto){
   )
   
 }
+
+

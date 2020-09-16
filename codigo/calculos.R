@@ -1,7 +1,8 @@
 # Funcion de Calculo de Primas ............................................
-calculo_producto = function(producto,Edad,Sexo,Tipo_interes,Duracion,Cuantia,
-                            Tipo_crecimiento,Crecimiento,Gastos_internos,
-                            Gastos_externos, Numero_primas,Temporalidad,...){
+calculo_producto = function(producto,Tipo_seguro,Edad,Sexo,Tipo_interes,
+                            Gastos_internos,Gastos_externos,Cuantia,Duracion,
+                            Seleccion_frac,Temporalidad,Fraccion,
+                            Tipo_crecimiento,Crecimiento,Diferido,...){
   require(lifecontingencies)
   respuesta = 
     switch (producto,
@@ -12,127 +13,209 @@ calculo_producto = function(producto,Edad,Sexo,Tipo_interes,Duracion,Cuantia,
               l = list()
               tabla = switch(Sexo,'Hombre' = {TH},'Mujer' = {TM})
               #...............................
-              l$prima_pura = Axn(tabla , x = Edad, n = Cobertura, i = Tipo_interes, k = 1)
-              l$prima_pura = l$prima_pura*Cuantia
-              #...............................
-              l$prima_inventario = Axn(tabla , x = Edad, n = Cobertura, i = Tipo_interes, k = 1)*(1+Gastos_internos)
-              l$prima_inventario = l$prima_inventario*Cuantia
-              #...............................
-              l$prima_comercial = Axn(tabla , x = Edad, n = Cobertura, i = Tipo_interes, k = 1)*(1+Gastos_internos)*(1+Gastos_externos)
-              l$prima_comercial = l$prima_comercial*Cuantia
-              #...............................
-              if(Seleccion_frac == 'Si'){
-                l$prima_fraccionada = (Axn(tabla , x = Edad, n = Cobertura, i = Tipo_interes, k = 1)/
-                                         axn(tabla, x = Edad, n = Fraccion, i = Tipo_interes, k = Temporalidad, payment = 'due'))/Temporalidad
-                l$prima_fraccionada = l$prima_fraccionada * Cuantia
-              }else{
-                l$prima_fraccionada = "No se calculó"
+              if(Tipo_seguro =='Entera'){
+                if(Seleccion_frac=='No') {
+                  l$prima_pura = Cuantia*Axn(tabla, x = Edad, i = Tipo_interes, k=1)
+                  l$prima_inventario = l$prima_pura*(1+Gastos_internos)
+                  l$prima_comercial = l$prima_pura*(1+Gastos_internos)*(1+Gastos_externos)
+                }
+                if(Seleccion_frac=='Si'){
+                  l$prima_pura = Cuantia*Axn(tabla, x = Edad, i = Tipo_interes, k=1)
+                  l$prima_fraccionada = (l$prima_pura/axn(tabla, x=Edad, n = Fraccion , 
+                                                          i=Tipo_interes, m=0, 
+                                                          k=Temporalidad ,payment = "due"))/Temporalidad
+                  l$prima_inventario = l$prima_fraccionada*(1+Gastos_internos)
+                  l$prima_comercial = l$prima_inventario*(1+Gastos_externos)
+                }
               }
-              #...............................
-              l$reserva = c()
-              P = l$prima_pura
-              PNivel = P/axn(tabla, x= Edad, n = Cobertura, i = Tipo_interes, m = 0, k = 1, payment = "due")
-              Reserva = function(t){
-                return(Cuantia*Axn(tabla, x=Edad+t, n=Cobertura-t, i=Tipo_interes, m=0, k=1) - 
-                         PNivel*axn(tabla, x=Edad+t, n=Cobertura-t, i=Tipo_interes, m=0, payment = "immediate", k=1))
-              } 
-              for(t in 0:15){l$reserva[t] = Reserva(t)}
-              #...............................
-              l
+              if(Tipo_seguro=='Temporal'){
+                
+                if(Seleccion_frac=='No'){
+                  l$prima_pura = Cuantia*Axn(tabla, x = Edad, n = Duracion, i = Tipo_interes, k=1)
+                  l$prima_inventario = l$prima_pura*(1+Gastos_internos)
+                  l$prima_comercial = l$prima_inventario*(1+Gastos_externos)
+                  l$prima_nivelada = l$prima_pura/axn(tabla, x=Edad, n = Duracion, i = Tipo_interes, m = 0, k = 1, payment = "due")
+                  l$reserva = c()
+                  for(t in 0:Duracion){
+                    l$reserva[t+1] = #paste0("Anio : ", t, " Reserva Matematica : ", 
+                      Reserva(producto=producto,t=t,l=l,tabla=tabla,Cuantia=Cuantia,
+                              Edad=Edad,Duracion=Duracion,
+                              Tipo_interes=Tipo_interes,Diferido=0)
+                    #)
+                  }
+                  # plot(seq(0,Duracion), l$reserva, type='l', col=3, xlab='Anio', ylab='Reserva')
+                }
+                if(Seleccion_frac=='Si'){
+                  l$prima_pura = Cuantia*Axn(tabla, x = Edad, n= Duracion, i = Tipo_interes, k=1)
+                  l$prima_fraccionada = (l$prima_pura/axn(tabla, x=Edad, n = Fraccion , i=Tipo_interes, m=0, k=Temporalidad ,payment = "due"))/Temporalidad
+                  l$prima_inventario = l$prima_fraccionada*(1+Gastos_internos)
+                  l$prima_comercial = l$prima_inventario*(1+Gastos_externos)
+                }
+              }
+              
+              return(l)
             },
-            #...............................
             #...............................
             #...............................
             '1_supervivencia' = {
               l = list()
               tabla = switch(Sexo,'Hombre' = {TH},'Mujer' = {TM})
               #...............................
-              l$prima_pura = Exn(tabla , x = Edad, n = Cobertura, i = Tipo_interes)
-              l$prima_pura = l$prima_pura*Cuantia
-              #...............................
-              l$prima_inventario = Exn(tabla , x = Edad, n = Cobertura, i = Tipo_interes)*(1+Gastos_internos)
-              l$prima_inventario = l$prima_inventario*Cuantia
-              #...............................
-              l$prima_comercial = Exn(tabla , x = Edad, n = Cobertura, i = Tipo_interes)*(1+Gastos_internos)*(1+Gastos_externos)
-              l$prima_comercial = l$prima_comercial*Cuantia
-              #...............................
-              if(Seleccion_frac == 'Si'){
-                l$prima_fraccionada = (Exn(tabla , x = Edad, n = Cobertura, i = Tipo_interes)/
-                                         axn(tabla, x = Edad, n = Fraccion, i = Tipo_interes, k = Temporalidad, payment = 'due'))/Temporalidad
-                l$prima_fraccionada = l$prima_fraccionada * Cuantia
-              }else{
-                l$prima_fraccionada = "No se calculó"
+              if(Seleccion_frac=='No'){
+                l$prima_pura = Cuantia*Exn(tabla, x = Edad, n = Duracion, i = Tipo_interes)
+                l$prima_inventario = l$prima_pura*(1+Gastos_internos)
+                l$prima_comercial = l$prima_inventario*(1+Gastos_externos)
+                l$prima_nivelada = l$prima_pura/axn(tabla, x=Edad, n = Duracion, i = Tipo_interes, m = 0, k = 1, payment = "due")
+                l$reserva = c()
+                for(t in 0:Duracion){
+                  l$reserva[t+1] = #paste0("Anio : ", t, " Reserva Matematica : ", 
+                    Reserva(producto=producto,t=t,l = l,tabla=tabla,Cuantia=Cuantia,
+                            Edad=Edad,Duracion=Duracion,
+                            Tipo_interes=Tipo_interes,Diferido=0)
+                  #)
+                }
+                # plot(seq(0,Duracion), l$reserva, type='l', col=3, xlab='Anio', ylab='Reserva')
+                
               }
-              #...............................
-              l$reserva = c()
-              P = l$prima_pura
-              PNivel = P/axn(tabla, x= Edad, n = Cobertura, i = Tipo_interes, m = 0, k = Temporalidad, payment = "due")
-              Reserva = function(t){
-                return(Cuantia*Exn(tabla, x=Edad+t, n=Cobertura-t, i=Tipo_interes, m=0) - 
-                         PNivel*axn(tabla, x=Edad+t, n=Cobertura-t, i=Tipo_interes, m=0, payment = "immediate", k=Temporalidad))
-              } 
-              for(t in 0:15){l$reserva[t] = Reserva(t)}
-              #...............................
-              l
+              if(Seleccion_frac == 'Si'){
+                l$prima_pura = Cuantia*Exn(tabla, x = Edad, n= Duracion, i = Tipo_interes)
+                l$prima_fraccionada =  (l$prima_pura/axn(tabla, x=Edad, n = Fraccion , i=Tipo_interes, m=0, k=Temporalidad ,payment = "due"))/Temporalidad
+                l$prima_inventario = l$prima_fraccionada*(1+Gastos_internos)
+                l$prima_comercial  = l$prima_inventario*(1+Gastos_externos)
+              }
+              
+              return(l)
             },
-            #...............................
             #...............................
             #...............................
             '1_mixto' = {
               l = list()
               tabla = switch(Sexo,'Hombre' = {TH},'Mujer' = {TM})
               #...............................
-              l$prima_pura = ""
-              #...............................
-              l$prima_inventario = ""
-              #...............................
-              l$prima_comercial = ""
-              #...............................
-              l$prima_fraccionada = ""
-              #...............................
-              l$reserva = ""
-              #...............................
-              l
+              if(Seleccion_frac=='No'){
+                l$prima_pura = Cuantia*AExn(tabla, x = Edad, n = Duracion, i = Tipo_interes, k=1)
+                l$prima_inventario  = l$prima_pura*(1+Gastos_internos)
+                l$prima_comercial  = l$prima_inventario*(1+Gastos_externos)
+                l$prima_nivelada = l$prima_pura/axn(tabla, x=Edad, n = Duracion, i = Tipo_interes, m = 0, k = 1, payment = "due")
+                l$reserva = c()
+                for(t in 0:Duracion){
+                  l$reserva[t+1] = #paste0("Anio : ", t, " Reserva Matematica : ", 
+                    Reserva(producto=producto,t=t,l = l,tabla=tabla,Cuantia=Cuantia,
+                            Edad=Edad,Duracion=Duracion,
+                            Tipo_interes=Tipo_interes,Diferido=0)
+                  #)
+                }
+                # plot(seq(0,Duracion), l$reserva, type='l', col=3, xlab='Anio', ylab='Reserva')
+                
+              }
+              if(Seleccion_frac=='Si'){
+                l$prima_pura = Cuantia*AExn(tabla, x = Edad, n= Duracion, i = Tipo_interes, k=1)
+                l$prima_fraccionada =  (l$prima_pura/axn(tabla, x=Edad, n = Fraccion , i=Tipo_interes, m=0, k=Temporalidad ,payment = "due"))/Temporalidad
+                l$prima_inventario = l$prima_fraccionada*(1+Gastos_internos)
+                l$prima_comercial  = l$prima_inventario*(1+Gastos_externos)
+              }
+              return(l)
             },
-            
+            #...............................
+            #...............................
+            '1_diferido' = {
+              l = list()
+              tabla = switch(Sexo,'Hombre' = {TH},'Mujer' = {TM})
+              #...............................
+              if(Tipo_seguro=='Entera'){
+                if(Seleccion_frac=='No'){
+                  l$prima_pura = Cuantia*Axn(tabla, x = Edad, i = Tipo_interes, m = Diferido , k=1)
+                  l$prima_inventario  = l$prima_pura*(1+Gastos_internos)
+                  l$prima_comercial  = l$prima_inventario*(1+Gastos_externos)
+                }
+                if(Seleccion_frac=='Si'){
+                  l$prima_pura = Cuantia*Axn(table, x = Edad, i = Tipo_interes, m = Diferido, k=1)
+                  l$prima_fraccionada =  (l$prima_pura/axn(tabla, x=Edad, n = Fraccion , i=Tipo_interes, m=Difererimiento, k=Temporalidad ,payment = "due"))/Temporalidad
+                  l$prima_inventario = l$prima_fraccionada*(1+Gastos_internos)
+                  l$prima_comercial  = l$prima_inventario*(1+Gastos_externos)
+                }
+              }
+              if(Tipo_seguro=='Temporal'){
+                if(Seleccion_frac=='No'){
+                  l$prima_pura = Cuantia*Axn(tabla, x = Edad, n = Duracion, i = Tipo_interes, m = Diferido, k=1)
+                  l$prima_inventario  = l$prima_pura*(1+Gastos_internos)
+                  l$prima_comercial  = l$prima_inventario*(1+Gastos_externos)
+                  l$prima_nivelada = l$prima_pura/axn(tabla, x=Edad, n = Duracion, i = Tipo_interes, m = Diferido, k = 1, payment = "due")
+                  l$reserva = c()
+                  for(t in 0:Duracion){
+                    l$reserva[t+1] = #paste0("Anio : ", t, " Reserva Matematica : ", 
+                      Reserva(producto=producto,t=t,l = l,tabla=tabla,Cuantia=Cuantia,
+                              Edad=Edad,Duracion=Duracion,
+                              Tipo_interes=Tipo_interes,Diferido=Diferido)
+                    #)
+                  }
+                  # plot(seq(0,Duracion), l$reserva, type='l', col=3, xlab='Anio', ylab='Reserva')
+                  
+                }
+                if(Seleccion_frac=='Si'){
+                  l$prima_pura = Cuantia*Axn(tabla, x = Edad, n= Duracion, i = Tipo_interes, m= Diferido, k=1)
+                  l$prima_fraccionada =  (l$prima_pura/axn(tabla, x=Edad, n = Fraccion , i=Tipo_interes, m=Diferido, k=Temporalidad ,payment = "due"))/Temporalidad
+                  l$prima_inventario = l$prima_fraccionada *(1+Gastos_internos)
+                  l$prima_comercial  = l$prima_inventario*(1+Gastos_externos)
+                  
+                }
+              }
+              return(l)
+            },
+            #...............................
+            #...............................
+            '1_cuantia_variable' = {
+              l = list()
+              tabla = switch(Sexo,'Hombre' = {TH},'Mujer' = {TM})
+              #...............................
+              if(Tipo_crecimiento=='Geometrico'){
+                Interes = (Tipo_interes-Crecimiento)/(1+Crecimiento) 
+                l$prima_pura = (Cuantia/(1+Crecimiento))*Axn(tabla, x = Edad,n=Duracion, i = Interes, k=1)
+                l$prima_inventario = l$prima_pura*(1+Gastos_internos)
+                l$prima_comercial  = l$prima_inventario*(1+Gastos_externos)
+                
+              }
+              if(Tipo_crecimiento=='Aritmetico'){
+                Prima1 = (Cuantia-Crecimiento)*Axn(tabla, x = Edad,n=Duracion, i = Tipo_interes, k=1)
+                Prima2 = Crecimiento*Iaxn(tabla, x = Edad, i = Tipo_interes, k=1)
+                l$prima_pura = Prima1+Prima2
+                l$prima_inventario  = l$prima_pura*(1+Gastos_internos)
+                l$prima_comercial  = l$prima_inventario*(1+Gastos_externos)
+              }
+              
+              return(l)
+            },
             #...............................#...............................
             # Rentas   .....................#...............................
             #...............................#...............................
-            '2_prepagables' = {
-              l = list()
-              tabla = switch(Sexo,'Hombre' = {TH},'Mujer' = {TM})
-              #...............................
-              l$prima_pura = ""
-              #...............................
-              l$prima_inventario = ""
-              #...............................
-              l$prima_comercial = ""
-              #...............................
-              l$prima_fraccionada = ""
-              #...............................
-              l$reserva = ""
-              #...............................
-              l
-            },
+            '2_prepagables' = list(producto = producto,
+                                   # Tipo_seguro = Tipo_seguro,
+                                   Edad = Edad, Sexo=Sexo,
+                                   Tipo_interes = Tipo_interes,
+                                   Gastos_internos = Gastos_internos,
+                                   Gastos_externos = Gastos_externos,
+                                   Cuantia = Cuantia,
+                                   Duracion = Duracion,
+                                   Seleccion_frac = Seleccion_frac,
+                                   Temporalidad = Temporalidad,
+                                   Fraccion = Fraccion,
+                                   Tipo_crecimiento = Tipo_crecimiento,
+                                   Crecimiento = Crecimiento),
             #...............................
             #...............................
-            #...............................
-            '2_pospagables' = {
-              l = list()
-              tabla = switch(Sexo,'Hombre' = {TH},'Mujer' = {TM})
-              #...............................
-              l$prima_pura = ""
-              #...............................
-              l$prima_inventario = ""
-              #...............................
-              l$prima_comercial = ""
-              #...............................
-              l$prima_fraccionada = ""
-              #...............................
-              l$reserva = ""
-              #...............................
-              l
-            }
+            '2_pospagables' = list(producto = producto,
+                                   # Tipo_seguro = Tipo_seguro,
+                                   Edad = Edad, Sexo=Sexo,
+                                   Tipo_interes = Tipo_interes,
+                                   Gastos_internos = Gastos_internos,
+                                   Gastos_externos = Gastos_externos,
+                                   Cuantia = Cuantia,
+                                   Duracion = Duracion,
+                                   Seleccion_frac = Seleccion_frac,
+                                   Temporalidad = Temporalidad,
+                                   Fraccion = Fraccion,
+                                   Tipo_crecimiento = Tipo_crecimiento,
+                                   Crecimiento = Crecimiento)
     )
   
   return(respuesta)
