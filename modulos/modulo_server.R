@@ -10,16 +10,36 @@ ModuloServer = function(id, producto = id){
                function(input,output,session){
                  
                  # Actualizar SelectInput tipo_fraccion  ...................
-                 observeEvent(input$tipo_seguro,{
+                 # observeEvent(input$tipo_seguro,{
+                 #   ns = session$ns
+                 #   try({
+                 #     Tipo_seguro = NULL
+                 #     Tipo_seguro = input$tipo_seguro
+                 #   })
+                 #   if(is.null(Tipo_seguro)) Tipo_seguro = 'Nulo'
+                 #   if(Tipo_seguro == 'Temporal'){
+                 #     updateSelectInput(session, inputId = ("tipo_fraccion"), # OJO No se necesita ns() en updateInput!!
+                 #                       choices = 'No')
+                 #   }else{
+                 #     updateSelectInput(session, inputId = ("tipo_fraccion"), # OJO No se necesita ns() en updateInput!!
+                 #                       choices = c('No','Si'))
+                 #   }
+                 #   
+                 # })
+                 
+                 observe({
                    ns = session$ns
                    try({
                      Tipo_seguro = NULL
                      Tipo_seguro = input$tipo_seguro
                    })
                    if(is.null(Tipo_seguro)) Tipo_seguro = 'Nulo'
-                   if(Tipo_seguro == 'Temporal'){
+                   if(producto=='1_cuantia_variable'){
                      updateSelectInput(session, inputId = ("tipo_fraccion"), # OJO No se necesita ns() en updateInput!!
                                        choices = 'No')
+                   }else{
+                     updateSelectInput(session, inputId = ("tipo_fraccion"), # OJO No se necesita ns() en updateInput!!
+                                       choices = c('No','Si'))
                    }
                    
                  })
@@ -235,13 +255,14 @@ ModuloServer = function(id, producto = id){
                    prima = resultado()$prima_pura
                    titulo = "Prima Pura"
                    if(is.null(prima)){
-                     prima = 0; color = 'black'
+                     prima = 'No disponible'; color = 'black'
                    }else{
+                     prima = round(prima,2)
                      color = 'blue'
                    }
                    try({
                      caja = infoBox(title = titulo, fill = TRUE,
-                                    value = round(prima,2),
+                                    value = prima,
                                     icon = icon("stats", lib = "glyphicon"),color=color)
                    })
                    return(caja)
@@ -251,13 +272,14 @@ ModuloServer = function(id, producto = id){
                    prima = resultado()$prima_inventario
                    titulo = "Prima inventario"
                    if(is.null(prima)){
-                     prima = 0; color = 'black'
+                     prima = 'No disponible'; color = 'black'
                    }else{
+                     prima = round(prima,2)
                      color = 'purple'
                    }
                    try({
                      caja = infoBox(title = titulo, fill = TRUE,
-                                    value = round(prima,2),
+                                    value = prima,
                                     icon = icon("stats", lib = "glyphicon"),color=color)
                    })
                    return(caja)
@@ -267,13 +289,14 @@ ModuloServer = function(id, producto = id){
                    prima = resultado()$prima_comercial
                    titulo = "Prima comercial"
                    if(is.null(prima)){
-                     prima = 0; color = 'black'
+                     prima = 'No disponible'; color = 'black'
                    }else{
+                     prima = round(prima,2)
                      color = 'yellow'
                    }
                    try({
                      caja = infoBox(title = titulo, fill = TRUE,
-                                    value = round(prima,2),
+                                    value = prima,
                                     icon = icon("stats", lib = "glyphicon"),color=color)
                    })
                    return(caja)
@@ -285,13 +308,14 @@ ModuloServer = function(id, producto = id){
                    prima = resultado()$prima_fraccionada
                    titulo = "Prima fraccionada"
                    if(is.null(prima)){
-                     prima = 0; color = 'black'
+                     prima = 'No disponible'; color = 'black'
                    }else{
-                     color = 'blue'
+                     prima = round(prima,2)
+                     color = 'green'
                    }
                    try({
-                     caja = infoBox(title = titulo, fill = TRUE,
-                                    value = round(prima,2),
+                     caja = infoBox(title = titulo, fill = FALSE,
+                                    value = prima,
                                     icon = icon("stats", lib = "glyphicon"),color=color)
                    })
                    return(caja)
@@ -301,13 +325,14 @@ ModuloServer = function(id, producto = id){
                    prima = resultado()$prima_nivelada
                    titulo = "Prima nivelada"
                    if(is.null(prima)){
-                     prima = 0; color = 'black'
+                     prima = 'No disponible'; color = 'black'
                    }else{
-                     color = 'blue'
+                     prima = round(prima,2)
+                     color = 'green'
                    }
                    try({
-                     caja = infoBox(title = titulo, fill = TRUE,
-                                    value = round(prima,2),
+                     caja = infoBox(title = titulo, fill = FALSE,
+                                    value = prima,
                                     icon = icon("stats", lib = "glyphicon"),color=color)
                    })
                    return(caja)
@@ -350,7 +375,7 @@ ModuloServer = function(id, producto = id){
                    hchart(df,type = "area",
                           hcaes(x = t, y = Reserva),
                           name = "Reserva",
-                          color = "#1abc9c",
+                          color = "#c39bd3",
                           showInLegend = TRUE
                    )
                  })

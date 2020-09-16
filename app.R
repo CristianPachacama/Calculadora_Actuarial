@@ -18,7 +18,16 @@ source(file = 'codigo/extras.R',local = T)
 
 ui = dashboardPage(
     # ENCABEZADO ...............................
-    dashboardHeader(title = "Calculadora actuarial"),
+    dashboardHeader(
+        title = "Calculadora actuarial"
+        # title = shinyDashboardLogo(
+        #     theme = "blue_gradient",
+        #     boldText = "Shiny",
+        #     mainText = "App",
+        #     badgeText = "v1.1"
+        # )
+        ),
+    
     # PESTANIAS MENU ...........................
     dashboardSidebar(
         sidebarMenu(
@@ -38,10 +47,10 @@ ui = dashboardPage(
         )
     ),
     
-    # CUERPO  ......................................
+    # CUERPO  .........................................
     dashboardBody(
-        # Custom theme .............................
-        shinyDashboardThemes(theme = "blue_gradient"), 
+        # Tema del Dashboard  .........................
+        shinyDashboardThemes(theme = "grey_dark"),
         # c('blue_gradient','flat_red','grey_light','grey_dark','onenote','poor_mans_flatly','purple_gradient')
         
         tabItems(
