@@ -9,6 +9,21 @@ ModuloServer = function(id, producto = id){
                # Empieza Servidor Modulo  ..................................
                function(input,output,session){
                  
+                 # Actualizar SelectInput tipo_fracciona  ..................
+                 observeEvent(input$tipo_seguro,{
+                   ns = session$ns
+                   try({
+                     Tipo_seguro = NULL
+                     Tipo_seguro = input$tipo_seguro
+                   })
+                   if(is.null(Tipo_seguro)) Tipo_seguro = 'Nulo'
+                   if(Tipo_seguro == 'Temporal'){
+                     updateSelectInput(session, inputId = ("tipo_fraccion"), # OJO No se necesita ns() en updateInput!!
+                                       choices = 'No')
+                   }
+                   
+                 })
+                 
                  # Actualizar Widget Tipo Seguro  ..........................
                  output$wid_tipo_seguro = renderUI({
                    ns = session$ns
