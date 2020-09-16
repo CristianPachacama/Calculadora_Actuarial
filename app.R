@@ -85,7 +85,6 @@ server = function(input, output, session) {
     ModuloServer(id = '2_prepagables')
     ModuloServer(id = '2_pospagables')
     
-    
 }
 
 

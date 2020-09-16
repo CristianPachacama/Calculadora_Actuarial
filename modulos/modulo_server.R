@@ -9,7 +9,7 @@ ModuloServer = function(id, producto = id){
                # Empieza Servidor Modulo  ..................................
                function(input,output,session){
                  
-                 # Actualizar SelectInput tipo_fracciona  ..................
+                 # Actualizar SelectInput tipo_fraccion  ...................
                  observeEvent(input$tipo_seguro,{
                    ns = session$ns
                    try({
@@ -330,10 +330,9 @@ ModuloServer = function(id, producto = id){
                    if(is.null(Tipo_seguro)) Tipo_seguro = 'Temporal'
                    
                    # Wiget de Grafico Reserva ......
-                   if(Tipo_seguro=='Temporal' & Seleccion_frac=='No'){
+                   if(Tipo_seguro=='Temporal' & Seleccion_frac=='No' & producto!='1_cuantia_variable'){
                      wid_reser = highchartOutput(ns('graf_reserva'))
-                   }
-                   if(Tipo_seguro=='Entera'){
+                   }else{
                      wid_reser = br()
                    }
                    return(wid_reser)
