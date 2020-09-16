@@ -1,13 +1,14 @@
 library(shiny)
-library(shinyjs)
+# library(shinyjs)
+library(shinythemes)
 library(lubridate)
 library(lifecontingencies)
 
 load('datos/tablas_listas.RData')
-source(file = 'modulos/panel_lateral.R')
-# source(file = 'codigo/calculos.R')
-source(file = 'codigo/calculos_testeo.R')
-source(file = 'codigo/extras.R')
+source(file = 'modulos/panel_lateral.R',local = T)
+# source(file = 'codigo/calculos.R',local = T)
+source(file = 'codigo/calculos_testeo.R',local = T)
+source(file = 'codigo/extras.R',local = T)
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # Define UI -------------------------------------------
@@ -19,8 +20,8 @@ source(file = 'codigo/extras.R')
 #     titlePanel("Caculadora Actuarial"),
 # 
 #     # Sidebar with a slider input for number of bins
-#     sidebarLayout(
-#         sidebarPanel(
+#     
+#         sidebarPanel(sidebarLayout(
 #             PanelLateralUI('panel_1_1')
 #         ),
 # 
@@ -33,7 +34,7 @@ source(file = 'codigo/extras.R')
 #     
 
 
-ui = navbarPage("Calculadora Actuarial", id="nav",
+ui = navbarPage("Calculadora Actuarial", id="nav",theme = shinytheme("flatly"),
                 
                 # Seguros de Vida -----------------------------------------------
                 navbarMenu("Seguros de  Vida",
