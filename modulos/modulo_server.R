@@ -297,7 +297,7 @@ ModuloServer = function(id, producto = id){
                      prima = 'No disponible'; color = 'black'
                    }else{
                      prima = round(prima,2)
-                     color = 'purple'
+                     color = 'yellow'
                    }
                    try({
                      caja = infoBox(title = titulo, fill = TRUE,
@@ -314,7 +314,7 @@ ModuloServer = function(id, producto = id){
                      prima = 'No disponible'; color = 'black'
                    }else{
                      prima = round(prima,2)
-                     color = 'yellow'
+                     color = 'green'
                    }
                    try({
                      caja = infoBox(title = titulo, fill = TRUE,
@@ -333,7 +333,7 @@ ModuloServer = function(id, producto = id){
                      prima = 'No disponible'; color = 'black'
                    }else{
                      prima = round(prima,2)
-                     color = 'green'
+                     color = 'red'
                    }
                    try({
                      caja = infoBox(title = titulo, fill = FALSE,
@@ -350,7 +350,7 @@ ModuloServer = function(id, producto = id){
                      prima = 'No disponible'; color = 'black'
                    }else{
                      prima = round(prima,2)
-                     color = 'green'
+                     color = 'purple'
                    }
                    try({
                      caja = infoBox(title = titulo, fill = FALSE,

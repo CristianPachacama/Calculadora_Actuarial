@@ -12,15 +12,17 @@ library(lubridate)
 library(readxl)
 library(dplyr)
 
-
 load('datos/tablas_listas.RData')
-df_cartera = read_excel(path = 'datos/Ejemplo_Cartera.xlsx')
+
 source(file = 'modulos/modulo_server.R',local = T)
 source(file = 'modulos/modulo_ui.R',local = T)
 source(file = 'modulos/moduloExtra_server.R',local = T)
 source(file = 'modulos/moduloExtra_ui.R',local = T)
 source(file = 'codigo/calculos.R',local = T)
 source(file = 'codigo/extras.R',local = T)
+
+df_cartera = read_excel(path = 'datos/Ejemplo_Cartera.xlsx')
+df_cartera = limpieza_cartera(df_cartera,Tipo_interes = 0.06)
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # Define UI -------------------------------------------
