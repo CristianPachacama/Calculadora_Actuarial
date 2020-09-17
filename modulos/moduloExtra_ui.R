@@ -11,9 +11,10 @@ ModuloExtraUI = function(id = "i_producto", titulo="Titulo_Pestania"){
   tabItem(tabName = id,
           h3(titulo),
           
+          # CAJA  ......................................
           box(title = "Datos Cartera",status = "primary",
               solidHeader = FALSE,collapsible = TRUE,
-              h3('aaaaa'),
+              
               # Subida Archivos .................
               fileInput(inputId = ns("archivo"), "Subir archivo excel",
                         # multiple = FALSE,
@@ -22,17 +23,47 @@ ModuloExtraUI = function(id = "i_producto", titulo="Titulo_Pestania"){
               dataTableOutput(outputId = ns("tabla"))  
           ),
           
-          box(title = "Resumen Cartera",status = "primary",
+          
+          # CAJA PRIMAS AGREGADAS   ....................
+          box(title = "Valores Agregados Primas",status = "primary",
               solidHeader = FALSE,collapsible = TRUE,
-              h3('bbbb')
+              # h3('cccc'),
+              fluidRow(
+                infoBoxOutput(outputId = ns('box_prima_pura')),
+                infoBoxOutput(outputId = ns('box_prima_inventario')),
+                infoBoxOutput(outputId = ns('box_prima_comercial')) 
+              ),
+              fluidRow(
+                infoBoxOutput(outputId = ns('box_prima_fraccionada')),
+                infoBoxOutput(outputId = ns('box_prima_nivelada'))
+              )
           ),
-          box(title = "Datos Seguro",status = "primary",
+          
+          # CAJA  ......................................
+          box(title = "Edad vs Sexo",status = "primary",
               solidHeader = FALSE,collapsible = TRUE,
-              h3('cccc')
+              # h3('bbbb'),
+              fluidRow(
+                column(6,
+                       highchartOutput(outputId = ns('graf_sexo'))
+                ),
+                column(6,
+                       plotlyOutput(outputId = ns('graf_edad'))
+                )
+              )
           ),
-          box(title = "Resumen Cruzado",status = "primary",
+          
+          # CAJA  ......................................
+          box(title = "Duración vs Cuantía",status = "primary",
               solidHeader = FALSE,collapsible = TRUE,
-              h3('dddd')
+              # h3('dddd')
+              highchartOutput(outputId = ns('graf_dura_cuant'))
+          ),
+          # CAJA  ......................................
+          box(title = "Gastos Internos vs Externos",status = "primary",
+              solidHeader = FALSE,collapsible = TRUE,
+              # h3('dddd')
+              highchartOutput(outputId = ns('graf_gastos'))
           )
   )
 }

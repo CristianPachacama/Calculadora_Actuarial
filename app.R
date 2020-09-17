@@ -2,11 +2,16 @@ library(shiny)
 library(shinythemes)
 library(shinydashboard)
 library(dashboardthemes)
-library(lifecontingencies)
+# Graficos y tablas
 library(highcharter)
+library(plotly)
+library(DT)
+# Calculos
+library(lifecontingencies)
 library(lubridate)
 library(readxl)
-library(DT)
+library(dplyr)
+
 
 load('datos/tablas_listas.RData')
 df_cartera = read_excel(path = 'datos/Ejemplo_Cartera.xlsx')
