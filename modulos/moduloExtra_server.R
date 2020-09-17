@@ -73,6 +73,7 @@ ModuloExtraServer = function(id, producto = id){
                          zeroline = F
                        ),
                        # Fondo Transparente
+                       font=fuente,
                        plot_bgcolor  = "rgba(0, 0, 0, 0)",
                        paper_bgcolor = "rgba(0, 0, 0, 0)",
                        fig_bgcolor   = "rgba(0, 0, 0, 0)"
@@ -104,6 +105,7 @@ ModuloExtraServer = function(id, producto = id){
                          zeroline = F
                        ),
                        # Fondo Transparente
+                       font=fuente,
                        plot_bgcolor  = "rgba(0, 0, 0, 0)",
                        paper_bgcolor = "rgba(0, 0, 0, 0)",
                        fig_bgcolor   = "rgba(0, 0, 0, 0)"
@@ -168,6 +170,7 @@ ModuloExtraServer = function(id, producto = id){
                      add_trace(y = ~Prima_nivelada, name = 'Prima nivelada') %>%
                      layout(yaxis = list(title = 'Primas Agregadas'), barmode = 'stack',
                             # Fondo Transparente
+                            font=fuente,
                             plot_bgcolor  = "rgba(0, 0, 0, 0)",
                             paper_bgcolor = "rgba(0, 0, 0, 0)",
                             fig_bgcolor   = "rgba(0, 0, 0, 0)"

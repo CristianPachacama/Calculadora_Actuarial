@@ -1,6 +1,22 @@
-# Funciones Extras
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# Funciones Extras -------------------------------
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-# Edad  ......................
+# Letra Color Plotly  .................
+fuente = list(color = 'white')#,# family = "sans serif",size = 14)
+
+# Letra HighCharter  ..................
+thmHC = hc_theme(colors = c('red','green','blue'),
+                 chart = list(backgroundColor = "#15C0DE"),
+                 title = list(style = list(color ='#ffffff',
+                                           fontFamily = "Erica One")),
+                 subtitle = list(style = list(color ='#ffffff',
+                                              fontFamily = "Shadows Into Light")),
+                 legend = list(itemStyle = list(fontFamily ='Tangerine',color ='#ffffff')
+                               ,itemHoverStyle = list(color ='#ffffff')))
+
+
+# Edad  ..............................
 age = function(dob, age.day = today(), units = "years", floor = TRUE) {
   require(lubridate)
   calc.age = lubridate::interval(dob, age.day) / lubridate::duration(num = 1, units = units)
@@ -13,23 +29,23 @@ Reserva = function(producto,t,l,tabla,Cuantia,Edad,Duracion,Tipo_interes,Diferid
   
   PNivel = l$prima_nivelada
   reserva = switch (producto,
-    '1_fallecimiento' = {
-      Cuantia*Axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=Diferido, k=1) - 
-      PNivel*axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=Diferido, payment = "immediate", k=1)
-      },
-    '1_supervivencia' = {
-      Cuantia*Exn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes) - 
-        PNivel*axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=Diferido, payment = "immediate", k=1)
-    },
-    '1_mixto' = {
-      Cuantia*AExn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, k=1) - 
-        PNivel*axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=Diferido, payment = "immediate", k=1)
-    },
-    '1_diferido' = {
-      Cuantia*Axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=Diferido, k=1) - 
-        PNivel*axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=Diferido, payment = "immediate", k=1)
-    }
-    
+                    '1_fallecimiento' = {
+                      Cuantia*Axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=Diferido, k=1) - 
+                        PNivel*axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=Diferido, payment = "immediate", k=1)
+                    },
+                    '1_supervivencia' = {
+                      Cuantia*Exn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes) - 
+                        PNivel*axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=Diferido, payment = "immediate", k=1)
+                    },
+                    '1_mixto' = {
+                      Cuantia*AExn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, k=1) - 
+                        PNivel*axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=Diferido, payment = "immediate", k=1)
+                    },
+                    '1_diferido' = {
+                      Cuantia*Axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=Diferido, k=1) - 
+                        PNivel*axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=Diferido, payment = "immediate", k=1)
+                    }
+                    
   )
   return(reserva)
 } 
@@ -67,7 +83,7 @@ limpieza_cartera = function(df0,Tipo_interes){
   df0$prima_nivelada = NA
   # Calculo de Primas .............
   for(i in seq(dim(df0)[1])){
-    cat("********** Limpieza ID:", df0$id[i])
+    # cat("********** Limpieza ID:", df0$id[i])
     resultado_primas = NULL
     try({
       resultado_primas = calculo_producto(producto = df0$Producto[i],

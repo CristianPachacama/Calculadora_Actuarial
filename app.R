@@ -64,8 +64,7 @@ ui = dashboardPagePlus(
             menuItem("Calculadora Cartera",tabName = "3_cartera",icon = icon("line-chart")),
             
             # Integrantes
-            menuItem("Integrantes",tabName = '4_integrantes', icon = icon('list'))
-            
+            menuItem("Integrantes",tabName = '4_integrantes', icon = icon('users'))
             
         )
     ),
@@ -102,11 +101,6 @@ ui = dashboardPagePlus(
             
             # Perfil Integrantes  .............
             ModuloIdUI(id='4_integrantes',titulo = 'Integrantes')
-            
-            
-            
-            
-            
             
             
         )
