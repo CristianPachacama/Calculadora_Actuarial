@@ -5,10 +5,15 @@ library(dashboardthemes)
 library(lifecontingencies)
 library(highcharter)
 library(lubridate)
+library(readxl)
+library(DT)
 
 load('datos/tablas_listas.RData')
+df_cartera = read_excel(path = 'datos/Ejemplo_Cartera.xlsx')
 source(file = 'modulos/modulo_server.R',local = T)
 source(file = 'modulos/modulo_ui.R',local = T)
+source(file = 'modulos/moduloExtra_server.R',local = T)
+source(file = 'modulos/moduloExtra_ui.R',local = T)
 source(file = 'codigo/calculos.R',local = T)
 source(file = 'codigo/extras.R',local = T)
 
@@ -31,6 +36,7 @@ ui = dashboardPage(
     # PESTANIAS MENU ...........................
     dashboardSidebar(
         sidebarMenu(
+            
             # SEGUROS
             menuItem("Seguros de Vida",tabName = "seguros_vida",icon = icon("list"),
                      menuSubItem('Fallecimiento',tabName = '1_fallecimiento',icon = icon('line-chart')),
@@ -43,7 +49,10 @@ ui = dashboardPage(
             menuItem("Rentas",tabName = "rentas",icon = icon("list"),
                      menuSubItem('Prepagables',tabName = '2_prepagables',icon = icon('line-chart')),
                      menuSubItem('Pospagables',tabName = '2_pospagables',icon = icon('line-chart'))
-            )
+            ),
+            # EXTRAS
+            menuItem("Calculadora Cartera",tabName = "3_cartera",icon = icon("line-chart"))
+            
         )
     ),
     
@@ -70,7 +79,11 @@ ui = dashboardPage(
             # Prepagables .......................
             ModuloUI(id='2_prepagables',titulo='Prepagables'),
             # Pospagables .......................
-            ModuloUI(id='2_pospagables',titulo='Pospagables')
+            ModuloUI(id='2_pospagables',titulo='Pospagables'),
+            
+            
+            # Calculadora Cartera ..............
+            ModuloExtraUI(id='3_cartera',titulo='Calculadora Cartera')
             
         )
         
@@ -94,6 +107,8 @@ server = function(input, output, session) {
     ModuloServer(id = '2_prepagables')
     ModuloServer(id = '2_pospagables')
     
+    # Extra cartera
+    ModuloExtraServer(id='3_cartera')
 }
 
 

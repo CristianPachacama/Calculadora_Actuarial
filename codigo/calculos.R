@@ -129,8 +129,8 @@ calculo_producto = function(producto,Tipo_seguro,Edad,Sexo,Tipo_interes,
                   l$prima_comercial  = l$prima_inventario*(1+Gastos_externos)
                 }
                 if(Seleccion_frac=='Si'){
-                  l$prima_pura = Cuantia*Axn(table, x = Edad, i = Tipo_interes, m = Diferido, k=1)
-                  l$prima_fraccionada =  (l$prima_pura/axn(tabla, x=Edad, n = Fraccion , i=Tipo_interes, m=Difererimiento, k=Temporalidad ,payment = "due"))/Temporalidad
+                  l$prima_pura = Cuantia*Axn(tabla, x = Edad, i = Tipo_interes, m = Diferido, k=1)
+                  l$prima_fraccionada =  (l$prima_pura/axn(tabla, x=Edad, n = Fraccion , i=Tipo_interes, m = Diferido, k=Temporalidad ,payment = "due"))/Temporalidad
                   l$prima_inventario = l$prima_fraccionada*(1+Gastos_internos)
                   l$prima_comercial  = l$prima_inventario*(1+Gastos_externos)
                 }
@@ -177,7 +177,7 @@ calculo_producto = function(producto,Tipo_seguro,Edad,Sexo,Tipo_interes,
               }
               if(Tipo_crecimiento=='Aritmetico'){
                 Prima1 = (Cuantia-Crecimiento)*Axn(tabla, x = Edad,n=Duracion, i = Tipo_interes, k=1)
-                Prima2 = Crecimiento*Iaxn(tabla, x = Edad, i = Tipo_interes, k=1)
+                Prima2 = Crecimiento*Iaxn(tabla, x = Edad, i = Tipo_interes)
                 l$prima_pura = Prima1+Prima2
                 l$prima_inventario  = l$prima_pura*(1+Gastos_internos)
                 l$prima_comercial  = l$prima_inventario*(1+Gastos_externos)

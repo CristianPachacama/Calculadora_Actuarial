@@ -10,22 +10,6 @@ ModuloServer = function(id, producto = id){
                function(input,output,session){
                  
                  # Actualizar SelectInput tipo_fraccion  ...................
-                 # observeEvent(input$tipo_seguro,{
-                 #   ns = session$ns
-                 #   try({
-                 #     Tipo_seguro = NULL
-                 #     Tipo_seguro = input$tipo_seguro
-                 #   })
-                 #   if(is.null(Tipo_seguro)) Tipo_seguro = 'Nulo'
-                 #   if(Tipo_seguro == 'Temporal'){
-                 #     updateSelectInput(session, inputId = ("tipo_fraccion"), # OJO No se necesita ns() en updateInput!!
-                 #                       choices = 'No')
-                 #   }else{
-                 #     updateSelectInput(session, inputId = ("tipo_fraccion"), # OJO No se necesita ns() en updateInput!!
-                 #                       choices = c('No','Si'))
-                 #   }
-                 #   
-                 # })
                  
                  observe({
                    ns = session$ns
@@ -105,9 +89,9 @@ ModuloServer = function(id, producto = id){
                                                       min = 0, max = 100, 
                                                       value = 4, 
                                                       step = 0.1, round = FALSE, 
-                                                      format = "#,##0.#####", 
+                                                      #format = "#,##0.#####", 
                                                       post  = " %",
-                                                      locale = "us", 
+                                                      # locale = "us", 
                                                       ticks = TRUE, animate = FALSE)
                                         },
                                         'Aritmetico' = {
@@ -177,36 +161,66 @@ ModuloServer = function(id, producto = id){
                  #............................................................................
                  resultado = reactive({
                    try({
-                     Tipo_seguro = NULL
+                     Tipo_seguro = 'Temporal'
+                     shiny::req(input$tipo_seguro)
                      Tipo_seguro = input$tipo_seguro
                    }) 
                    
                    try({
+                     shiny::req(input$edad)
                      Edad = input$edad
                      Edad = age(as.Date(Edad))
                      # print(Edad)
                    })
-                   try({Sexo = input$sexo})
-                   try({Tipo_interes = input$tipo_interes/100})
-                   try({Duracion = input$duracion})
-                   try({Cuantia = input$cuantia})
+                   try({
+                     shiny::req(input$sexo)
+                     Sexo = input$sexo
+                   })
+                   try({
+                     shiny::req(input$tipo_interes)
+                     Tipo_interes = input$tipo_interes/100
+                   })
+                   try({
+                     Duracion = 1
+                     shiny::req(input$duracion)
+                     Duracion = input$duracion
+                   })
+                   try({
+                     shiny::req(input$cuantia)
+                     Cuantia = input$cuantia
+                   })
                    
                    try({
-                     Tipo_crecimiento = NULL
+                     Tipo_crecimiento = 'Geometrico'
+                     shiny::req(input$tipo_crecim)
                      Tipo_crecimiento = input$tipo_crecim
                    })
                    try({
-                     Crecimiento = NULL
+                     Crecimiento = 0.1
+                     shiny::req(input$crecimiento)
+                     shiny::req(Tipo_crecimiento)
+                     
                      if(Tipo_crecimiento == 'Geometrico') Crecimiento = input$crecimiento/100
                      if(Tipo_crecimiento == 'Aritmetico') Crecimiento = input$crecimiento
                    })
                    
-                   try({Gastos_internos = input$gasto_int/100})
-                   try({Gastos_externos = input$gasto_ext/100})
+                   try({
+                     shiny::req(input$gasto_int)
+                     Gastos_internos = input$gasto_int/100
+                   })
+                   try({
+                     shiny::req(input$gasto_ext)
+                     Gastos_externos = input$gasto_ext/100
+                   })
                    # try({Numero_primas = input$numero_primas}) # Se calcula con fraccionamiento
                    
-                   try({Seleccion_frac = input$tipo_fraccion})
                    try({
+                     shiny::req(input$tipo_fraccion)
+                     Seleccion_frac = input$tipo_fraccion
+                   })
+                   try({
+                     Temporalidad = 12
+                     shiny::req(input$temporalidad)
                      aux = input$temporalidad
                      if(is.null(aux)) aux = 'Sin Fraccion'
                      Temporalidad = switch (aux,
@@ -215,9 +229,17 @@ ModuloServer = function(id, producto = id){
                                             'Semestral' = 2
                      )
                    })
-                   try({Fraccion = input$fraccion})
+                   try({
+                     Fraccion = 1
+                     shiny::req(input$fraccion)
+                     Fraccion = input$fraccion
+                   })
                    
-                   try({Diferido = input$diferido})
+                   try({
+                     Diferido = 1
+                     shiny::req(input$diferido)
+                     Diferido = input$diferido
+                   })
                    
                    #............................................................
                    # Ejecucion Calculos ........................................
@@ -302,7 +324,7 @@ ModuloServer = function(id, producto = id){
                    return(caja)
                  })
                  # .............................................
-                 # Primas no fijas .............................
+                 # Primas opcionales ...........................
                  # .............................................
                  output$box_prima_fraccionada = renderInfoBox({
                    prima = resultado()$prima_fraccionada
@@ -346,7 +368,8 @@ ModuloServer = function(id, producto = id){
                    ns = session$ns
                    # Parametros
                    try({
-                     Tipo_seguro = NULL
+                     Tipo_seguro = 'Temporal'
+                     shiny::req(input$tipo_seguro)
                      Tipo_seguro = input$tipo_seguro
                    })
                    try({
@@ -369,9 +392,11 @@ ModuloServer = function(id, producto = id){
                      Duracion = NULL
                      Duracion = input$duracion
                    })
-                   
-                   df = data.frame(t = 0:Duracion, Reserva = resultado()$reserva )
-                   
+                   if(is.null(resultado()$reserva)){
+                     df = data.frame(t = 0:Duracion, Reserva = NA)
+                   }else{
+                     df = data.frame(t = 0:Duracion, Reserva = resultado()$reserva )
+                   }
                    hchart(df,type = "area",
                           hcaes(x = t, y = Reserva),
                           name = "Reserva",
