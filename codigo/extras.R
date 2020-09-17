@@ -67,7 +67,7 @@ limpieza_cartera = function(df0,Tipo_interes){
   df0$prima_nivelada = NA
   # Calculo de Primas .............
   for(i in seq(dim(df0)[1])){
-    cat("********** Limpieza ID:", df0$identificacion[i])
+    cat("********** Limpieza ID:", df0$id[i])
     resultado_primas = NULL
     try({
       resultado_primas = calculo_producto(producto = df0$Producto[i],

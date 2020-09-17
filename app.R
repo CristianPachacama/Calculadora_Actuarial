@@ -1,6 +1,7 @@
 library(shiny)
 library(shinythemes)
 library(shinydashboard)
+library(shinydashboardPlus)
 library(dashboardthemes)
 # Graficos y tablas
 library(highcharter)
@@ -18,6 +19,7 @@ source(file = 'modulos/modulo_server.R',local = T)
 source(file = 'modulos/modulo_ui.R',local = T)
 source(file = 'modulos/moduloExtra_server.R',local = T)
 source(file = 'modulos/moduloExtra_ui.R',local = T)
+source(file = 'modulos/modulo_id.R',local = T)
 source(file = 'codigo/calculos.R',local = T)
 source(file = 'codigo/extras.R',local = T)
 
@@ -28,9 +30,10 @@ df_cartera = limpieza_cartera(df_cartera,Tipo_interes = 0.06)
 # Define UI -------------------------------------------
 #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-ui = dashboardPage(
+ui = dashboardPagePlus(
+    title = "Calculadora actuarial",
     # ENCABEZADO ...............................
-    dashboardHeader(
+    dashboardHeaderPlus(
         title = "Calculadora actuarial"
         # title = shinyDashboardLogo(
         #     theme = "blue_gradient",
@@ -38,7 +41,7 @@ ui = dashboardPage(
         #     mainText = "App",
         #     badgeText = "v1.1"
         # )
-        ),
+    ),
     
     # PESTANIAS MENU ...........................
     dashboardSidebar(
@@ -58,7 +61,11 @@ ui = dashboardPage(
                      menuSubItem('Pospagables',tabName = '2_pospagables',icon = icon('line-chart'))
             ),
             # EXTRAS
-            menuItem("Calculadora Cartera",tabName = "3_cartera",icon = icon("line-chart"))
+            menuItem("Calculadora Cartera",tabName = "3_cartera",icon = icon("line-chart")),
+            
+            # Integrantes
+            menuItem("Integrantes",tabName = '4_integrantes', icon = icon('list'))
+            
             
         )
     ),
@@ -90,7 +97,17 @@ ui = dashboardPage(
             
             
             # Calculadora Cartera ..............
-            ModuloExtraUI(id='3_cartera',titulo='Calculadora Cartera')
+            ModuloExtraUI(id='3_cartera',titulo='Calculadora Cartera'),
+            
+            
+            # Perfil Integrantes  .............
+            ModuloIdUI(id='4_integrantes',titulo = 'Integrantes')
+            
+            
+            
+            
+            
+            
             
         )
         
