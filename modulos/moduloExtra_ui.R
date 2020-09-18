@@ -78,7 +78,7 @@ ModuloExtraUI = function(id = "i_producto", titulo="Titulo_Pestania"){
             ),
             
             # Grafica PRIMAS AGREGADAS   ....................
-            box(title = "PRIMAS: Valores Agregados Primas",status = "success",
+            box(title = "PRIMAS: Valores Agregados por Producto",status = "success",
                 solidHeader = FALSE,collapsible = TRUE,
                 
                 plotlyOutput(outputId = ns('graf_prima_prod'))
