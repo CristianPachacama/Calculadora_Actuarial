@@ -19,11 +19,14 @@ ModuloExtraUI = function(id = "i_producto", titulo="Titulo_Pestania"){
             box(title = "Datos Cartera",status = "info",
                 solidHeader = FALSE,collapsible = TRUE,
                 
-                # Subida Archivos 
+                # Subida Archivos
                 fileInput(inputId = ns("archivo"), 
-                          "Subir archivo excel",
+                          "Subir archivo (.xlsx):",
+                          buttonLabel = 'Buscar',
+                          placeholder = 'Ingresa un archivo .xlsx',
                           # multiple = FALSE,
                           accept = c(".xlsx")),
+                
                 # Tipo de interes
                 sliderInput(inputId = ns('tipo_interes'), 
                             label = 'Tipo de interés', 

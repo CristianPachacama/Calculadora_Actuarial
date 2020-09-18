@@ -11,16 +11,32 @@ ModuloUI = function(id = "i_producto", titulo="Titulo_Pestania"){
   #............................................................
   tabItem(tabName = id,
           h3(titulo), #hr(),
+          
           fluidRow(
             # PANEL DE PARAMETROS ............
             # sidebarPanel( # Se cambio por box()
-            box(title = "Parametros",status = "primary",
+            box(title = "Parámetros",status = "primary",
                 solidHeader = FALSE,collapsible = TRUE,
+                
+                # PorUp Informacion del Producto ..............
+                actionBttn(
+                  inputId = ns("informacion"),
+                  label = "Guía de Usuario",
+                  style = "jelly", #"pill",'unite','material-flat','minimal','stretch','fill'
+                  icon = icon('info'),
+                  color = "success"
+                ),br(),br(),
+                
+                
+                # Contenedor Parametros
                 fluidRow(
+                  
                   column(6,
                          # Tipo de Seguro
                          uiOutput(outputId = ns("wid_tipo_seguro")),
                          
+                         # Tipo de Renta
+                         uiOutput(outputId = ns("wid_tipo_renta")),
                          
                          # Widgets COMUNES ................................
                          
@@ -31,7 +47,7 @@ ModuloUI = function(id = "i_producto", titulo="Titulo_Pestania"){
                                    min = as.character(Sys.Date()-98*365), 
                                    max = as.character(Sys.Date()-18*365), 
                                    format = "yyyy-mm-dd", 
-                                   startview = "year", 
+                                   startview = "decade", 
                                    weekstart = 0, language = "es", width='90%'),
                          # Sexo
                          radioButtons(inputId = ns('sexo'),
@@ -40,7 +56,7 @@ ModuloUI = function(id = "i_producto", titulo="Titulo_Pestania"){
                                       selected = NULL, width='90%'),
                          # Tipo de interes
                          sliderInput(inputId = ns('tipo_interes'), 
-                                     label = 'Tipo de interés', 
+                                     label = 'Tipo de interés:', 
                                      min = 0, max = 100, 
                                      value = 6, 
                                      step = 0.1, round = FALSE, 
@@ -53,7 +69,7 @@ ModuloUI = function(id = "i_producto", titulo="Titulo_Pestania"){
                          
                          # Gastos Internos
                          sliderInput(inputId = ns('gasto_int'), 
-                                     label = 'Gastos Internos', 
+                                     label = 'Gastos Internos:', 
                                      min = 0, max = 100, 
                                      value = 4, 
                                      step = 0.1, round = FALSE, 
@@ -64,7 +80,7 @@ ModuloUI = function(id = "i_producto", titulo="Titulo_Pestania"){
                                      width='90%'),
                          # Gastos Internos
                          sliderInput(inputId = ns('gasto_ext'), 
-                                     label = 'Gastos Externos', 
+                                     label = 'Gastos Externos:', 
                                      min = 0, max = 100, 
                                      value = 4, 
                                      step = 0.1, round = FALSE, 
@@ -89,7 +105,7 @@ ModuloUI = function(id = "i_producto", titulo="Titulo_Pestania"){
                          uiOutput(outputId = ns("wid_duracion")),
                          # Fraccionar
                          selectInput(inputId = ns('tipo_fraccion'),
-                                     label='Desea Fraccionar:',
+                                     label='Desea Fraccionar la Prima:',
                                      choices = c('Si',
                                                  'No'),
                                      selected = 'No',

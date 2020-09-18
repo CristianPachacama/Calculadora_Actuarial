@@ -13,19 +13,32 @@ ModuloExtraServer = function(id, producto = id){
                  #........................................................
                  datos = reactive({
                    df0 = df_cartera
-                   Tipo_interes = input$tipo_interes
+                   Tipo_interes = input$tipo_interes/100
                    try({
                      # shiny::req(input$archivo)
                      inFile = input$archivo
                      if(is.null(inFile)) cat("******** No hay archivo  *********")
                      
                      df0 = read_excel(inFile$datapath, 1)
+                     
                    })
-                   
                    
                    df0 = limpieza_cartera(df0,Tipo_interes)
                    
                    return(df0)
+                 })
+                 
+                 # Alerta Archivo subido
+                 observeEvent(!is.null(input$archivo),
+                 {
+                   # print("fuera...")
+                   show_alert(
+                       title = "Carga Exitosa !!",
+                       text = "Los datos se cargaron exitosamente.",
+                       showCloseButton = TRUE,
+                       type = "success"
+                   )
+                   
                  })
                  
                  
@@ -69,14 +82,14 @@ ModuloExtraServer = function(id, producto = id){
                      layout(
                        xaxis = list(title = "Sexo"),
                        yaxis = list(
-                         title = "Edad",
+                         title = "Cuantía",
                          zeroline = F
                        ),
                        # Fondo Transparente
                        font=fuente,
                        plot_bgcolor  = "rgba(0, 0, 0, 0)",
-                       paper_bgcolor = "rgba(0, 0, 0, 0)",
-                       fig_bgcolor   = "rgba(0, 0, 0, 0)"
+                       paper_bgcolor = "rgba(0, 0, 0, 0)"#,
+                       # fig_bgcolor   = "rgba(0, 0, 0, 0)"
                      )
                    
                    
@@ -107,8 +120,8 @@ ModuloExtraServer = function(id, producto = id){
                        # Fondo Transparente
                        font=fuente,
                        plot_bgcolor  = "rgba(0, 0, 0, 0)",
-                       paper_bgcolor = "rgba(0, 0, 0, 0)",
-                       fig_bgcolor   = "rgba(0, 0, 0, 0)"
+                       paper_bgcolor = "rgba(0, 0, 0, 0)"#,
+                       # fig_bgcolor   = "rgba(0, 0, 0, 0)"
                      )
                    
                    
@@ -163,7 +176,7 @@ ModuloExtraServer = function(id, producto = id){
                                Prima_fraccionada = sum(prima_fraccionada,na.rm = TRUE),
                                Prima_nivelada = sum(prima_nivelada,na.rm = TRUE)) %>% 
                      plot_ly(x = ~Producto, y = ~Prima_pura, 
-                                    type = 'bar', name = 'Prima pura') %>%
+                             type = 'bar', name = 'Prima pura') %>%
                      add_trace(y = ~Prima_inventario, name = 'Prima inventario') %>%
                      add_trace(y = ~Prima_comercial, name = 'Prima comercial') %>%
                      add_trace(y = ~Prima_fraccionada, name = 'Prima fraccionada') %>%
@@ -172,9 +185,9 @@ ModuloExtraServer = function(id, producto = id){
                             # Fondo Transparente
                             font=fuente,
                             plot_bgcolor  = "rgba(0, 0, 0, 0)",
-                            paper_bgcolor = "rgba(0, 0, 0, 0)",
-                            fig_bgcolor   = "rgba(0, 0, 0, 0)"
-                            )
+                            paper_bgcolor = "rgba(0, 0, 0, 0)"#,
+                            # fig_bgcolor   = "rgba(0, 0, 0, 0)"
+                     )
                    
                  })
                  
@@ -413,8 +426,6 @@ ModuloExtraServer = function(id, producto = id){
                    })
                    return(caja)
                  })
-                 
-                 
                  
                  
                }

@@ -9,6 +9,23 @@ ModuloServer = function(id, producto = id){
                # Empieza Servidor Modulo  ..................................
                function(input,output,session){
                  
+                 # PopUp Guia de usuario
+                 observeEvent(input$informacion,{
+                   # print("fuera...")
+                   
+                   TextoInformacion = 'Información del Producto'
+                   
+                   sendSweetAlert(
+                     title = "Guía de Usuario",
+                     session = session,
+                     text = TextoInformacion,
+                     html = TRUE,
+                     showCloseButton = TRUE,
+                     type = "info"
+                   )
+                   
+                 })
+                 
                  # Actualizar SelectInput tipo_fraccion  ...................
                  
                  observe({
@@ -33,7 +50,7 @@ ModuloServer = function(id, producto = id){
                    ns = session$ns
                    if(producto == '1_fallecimiento'|producto=='1_diferido'){
                      widg_tipo_seg = selectInput(inputId = ns('tipo_seguro'),
-                                                 label='Tipo Seguro:',
+                                                 label='Tipo de Seguro:',
                                                  choices = c('Entera',
                                                              'Temporal'), 
                                                  width='90%')
@@ -43,14 +60,31 @@ ModuloServer = function(id, producto = id){
                    return(widg_tipo_seg)
                  })
                  
+                 # Actualizar Widget Tipo RENTA  ..........................
+                 output$wid_tipo_renta = renderUI({
+                   ns = session$ns
+                   if(producto == '2_prepagables'|producto=='2_pospagables'){
+                     widg_tipo_rnt = selectInput(inputId = ns('tipo_renta'),
+                                                 label='Tipo de Renta:',
+                                                 choices = c('Vitalicia',
+                                                             'Temporal'), 
+                                                 width='90%')
+                   }else{
+                     widg_tipo_rnt = NULL
+                   }
+                   return(widg_tipo_rnt)
+                 })
+                 
                  # Actualizar Widget Duracion  ..........................
                  output$wid_duracion = renderUI({
                    ns = session$ns
                    Tipo_seguro = input$tipo_seguro
+                   Tipo_renta = input$tipo_renta
                    if(is.null(Tipo_seguro)) Tipo_seguro = 'Temporal'
-                   if(Tipo_seguro=='Temporal'){
+                   if(is.null(Tipo_renta)) Tipo_renta = 'Temporal'
+                   if(Tipo_seguro=='Temporal' & Tipo_renta == 'Temporal'){
                      wid_dura = numericInput(inputId = ns('duracion'), 
-                                             label = 'Duración de Prestación (años)', 
+                                             label = 'Cobertura (en años):',  #Duración de Prestación
                                              value = 1, min = 1, max = 95, step = NA, width='90%')
                    }else{
                      wid_dura = NULL
@@ -65,7 +99,7 @@ ModuloServer = function(id, producto = id){
                    ns = session$ns
                    if(producto=='1_cuantia_variable'){
                      wid_tipo_creci = selectInput(inputId = ns('tipo_crecim'),
-                                                  label='Tipo de crecimiento',
+                                                  label='Tipo de crecimiento:',
                                                   choices = c('Geométrico' = 'Geometrico', 
                                                               'Aritmético' = 'Aritmetico'),
                                                   selected = 1, width='90%')
@@ -96,8 +130,8 @@ ModuloServer = function(id, producto = id){
                                         },
                                         'Aritmetico' = {
                                           numericInput(inputId = ns('crecimiento'),
-                                                       label = 'Crecimiento de la Prestación',
-                                                       value = 0 , min = 0, width='90%')
+                                                       label = 'Crecimiento de la Prestación:',
+                                                       value = 50 , min = 0, width='90%')
                                         }
                    )
                    return(widg_crecim)
@@ -109,7 +143,7 @@ ModuloServer = function(id, producto = id){
                    widg_tempo = switch(input$tipo_fraccion,
                                        'Si' = {
                                          selectInput(inputId = ns('temporalidad'),
-                                                     label='Temporalidad de Primas:',
+                                                     label='Periodicidad de Pagos (Prima):',  # Temporalidad
                                                      choices = c('Mensual',
                                                                  'Trimestral',
                                                                  'Semestral'), 
@@ -129,7 +163,7 @@ ModuloServer = function(id, producto = id){
                    widg_crecim = switch(input$tipo_fraccion,
                                         'Si' = {
                                           numericInput(inputId = ns('fraccion'),
-                                                       label = 'Fraccionamiento (años):',
+                                                       label = 'Plazo de Pago (en años):', #Fraccionamiento
                                                        value = 1 , min = 1, width='90%')
                                         },
                                         'No' = {
@@ -144,7 +178,7 @@ ModuloServer = function(id, producto = id){
                    ns = session$ns
                    if(producto=='1_diferido'){
                      wid_difer = numericInput(inputId = ns('diferido'), 
-                                              label = 'Diferimiento (años)', 
+                                              label = 'Diferimiento (años):', 
                                               value = 1, min = 1, max = 95, 
                                               step = NA, width='90%')
                    }else{
@@ -164,6 +198,12 @@ ModuloServer = function(id, producto = id){
                      Tipo_seguro = 'Temporal'
                      shiny::req(input$tipo_seguro)
                      Tipo_seguro = input$tipo_seguro
+                   }) 
+                   
+                   try({
+                     Tipo_renta = 'Vitalicia'
+                     shiny::req(input$tipo_renta)
+                     Tipo_renta = input$tipo_renta
                    }) 
                    
                    try({
@@ -257,7 +297,8 @@ ModuloServer = function(id, producto = id){
                                                Seleccion_frac = Seleccion_frac,
                                                Fraccion = Fraccion,
                                                Tipo_seguro = Tipo_seguro,
-                                               Diferido = Diferido)
+                                               Diferido = Diferido,
+                                               Tipo_renta = Tipo_renta)
                    # calculos = calculo_producto(producto,Edad)
                    return(calculos)
                  })
@@ -266,6 +307,7 @@ ModuloServer = function(id, producto = id){
                  # Print Resultados ..............................
                  #................................................
                  output$print_resultados = renderPrint({
+                   if (is.null(resultado())) return(NULL)
                    resultado()
                  })
                  
@@ -274,6 +316,8 @@ ModuloServer = function(id, producto = id){
                  # Visualizaciones ...............................
                  #................................................
                  output$box_prima_pura = renderInfoBox({
+                   if (is.null(resultado())) return(NULL)
+                   
                    prima = resultado()$prima_pura
                    titulo = "Prima Pura"
                    if(is.null(prima)){
@@ -291,6 +335,8 @@ ModuloServer = function(id, producto = id){
                  })
                  #....
                  output$box_prima_inventario = renderInfoBox({
+                   if (is.null(resultado())) return(NULL)
+                   
                    prima = resultado()$prima_inventario
                    titulo = "Prima inventario"
                    if(is.null(prima)){
@@ -308,6 +354,8 @@ ModuloServer = function(id, producto = id){
                  })
                  #....
                  output$box_prima_comercial = renderInfoBox({
+                   if (is.null(resultado())) return(NULL)
+                   
                    prima = resultado()$prima_comercial
                    titulo = "Prima comercial"
                    if(is.null(prima)){
@@ -327,6 +375,8 @@ ModuloServer = function(id, producto = id){
                  # Primas opcionales ...........................
                  # .............................................
                  output$box_prima_fraccionada = renderInfoBox({
+                   if (is.null(resultado())) return(NULL)
+                   
                    prima = resultado()$prima_fraccionada
                    titulo = "Prima fraccionada"
                    if(is.null(prima)){
@@ -344,6 +394,8 @@ ModuloServer = function(id, producto = id){
                  })
                  #....
                  output$box_prima_nivelada = renderInfoBox({
+                   if (is.null(resultado())) return(NULL)
+                   
                    prima = resultado()$prima_nivelada
                    titulo = "Prima nivelada"
                    if(is.null(prima)){
@@ -378,7 +430,7 @@ ModuloServer = function(id, producto = id){
                    if(is.null(Tipo_seguro)) Tipo_seguro = 'Temporal'
                    
                    # Wiget de Grafico Reserva ......
-                   if(Tipo_seguro=='Temporal' & Seleccion_frac=='No' & producto!='1_cuantia_variable'){
+                   if(Seleccion_frac=='No' & producto!='1_cuantia_variable'){
                      wid_reser = highchartOutput(ns('graf_reserva'))
                    }else{
                      wid_reser = br()
@@ -388,21 +440,54 @@ ModuloServer = function(id, producto = id){
                  
                  # Grafico Reserva ......................
                  output$graf_reserva = renderHighchart({
+                   if (is.null(resultado())) return(NULL)
+                   Duracion = NULL
+                   df1 = NULL
+                   
+                   try({Duracion = input$duracion})
+                   try({df1 = data.frame(t = 0:Duracion, Reserva = resultado()$reserva )})
+                   
+                   # Segun tipo Seguro .........
                    try({
-                     Duracion = NULL
                      Duracion = input$duracion
+                     shiny::req(input$tipo_seguro)
+                     if(input$tipo_seguro == 'Entera') {
+                       if(producto == '1_fallecimiento') Duracion = 95 - age(input$edad)
+                       if(producto == '1_diferido') Duracion = 95 - age(input$edad) - input$diferido
+                       # print("seguro...")
+                       df1 = data.frame(t = 0:Duracion, Reserva = resultado()$reserva)
+                     }
+                     
                    })
-                   if(is.null(resultado()$reserva)){
-                     df = data.frame(t = 0:Duracion, Reserva = NA)
+                   
+                   # Segun Tipo Renta ...........
+                   try({
+                     Duracion = input$duracion
+                     
+                     if(producto == '2_prepagables'|producto=='2_pospagables') {
+                       
+                       if(input$tipo_renta == 'Vitalicia'){
+                         Duracion = 95 - age(input$edad)
+                       }
+                       # print("renta....")
+                       df1 = data.frame(t = 0:Duracion, Reserva = resultado()$reserva )
+                       
+                     }
+                   })
+                   # ................................
+                   # print("df1=")
+                   # print(head(df1))
+                   #
+                   if(is.null(df1)){
+                     return(NULL)
                    }else{
-                     df = data.frame(t = 0:Duracion, Reserva = resultado()$reserva )
+                     hchart(df1,type = "area",
+                            hcaes(x = t, y = Reserva),
+                            name = "Reserva",
+                            color = "#c39bd3",
+                            showInLegend = TRUE
+                     )
                    }
-                   hchart(df,type = "area",
-                          hcaes(x = t, y = Reserva),
-                          name = "Reserva",
-                          color = "#c39bd3",
-                          showInLegend = TRUE
-                   )
                  })
                  
                  

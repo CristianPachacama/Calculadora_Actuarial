@@ -1,8 +1,9 @@
 library(shiny)
-library(shinythemes)
+# library(shinythemes)
+library(shinyWidgets)
 library(shinydashboard)
-library(shinydashboardPlus)
 library(dashboardthemes)
+library(shinydashboardPlus)
 # Graficos y tablas
 library(highcharter)
 library(plotly)
@@ -78,21 +79,21 @@ ui = dashboardPagePlus(
         tabItems(
             
             # Fallecimiento ...........................
-            ModuloUI(id='1_fallecimiento',titulo='Fallecimiento'),
+            ModuloUI(id='1_fallecimiento',titulo='Seguro de Fallecimiento'),
             # Supervivencia  ..............................
-            ModuloUI(id='1_supervivencia',titulo='Superviviencia'),
+            ModuloUI(id='1_supervivencia',titulo='Seguro de Superviviencia'),
             # Mixto  ..............................
-            ModuloUI(id='1_mixto',titulo='Mixto'),
+            ModuloUI(id='1_mixto',titulo='Seguro Mixto'),
             # Diferido  ..............................
-            ModuloUI(id='1_diferido',titulo='Diferido'),
+            ModuloUI(id='1_diferido',titulo='Seguro Diferido'),
             # Cuantia Variable   .......................
-            ModuloUI(id='1_cuantia_variable',titulo='Cuantía Variable'),
+            ModuloUI(id='1_cuantia_variable',titulo='Seguro de Cuantía Variable'),
             
             
             # Prepagables .......................
-            ModuloUI(id='2_prepagables',titulo='Prepagables'),
+            ModuloUI(id='2_prepagables',titulo='Renta Prepagables'),
             # Pospagables .......................
-            ModuloUI(id='2_pospagables',titulo='Pospagables'),
+            ModuloUI(id='2_pospagables',titulo='Renta Pospagables'),
             
             
             # Calculadora Cartera ..............

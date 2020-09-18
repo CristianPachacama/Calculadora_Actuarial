@@ -44,6 +44,14 @@ Reserva = function(producto,t,l,tabla,Cuantia,Edad,Duracion,Tipo_interes,Diferid
                     '1_diferido' = {
                       Cuantia*Axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=Diferido, k=1) - 
                         PNivel*axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=Diferido, payment = "immediate", k=1)
+                    },
+                    '2_prepagables' = {
+                      Cuantia*axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=0, k=1, payment = "due") - 
+                        PNivel*axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=0, payment = "immediate", k=1)
+                    },
+                    '2_pospagables' = {
+                      Cuantia*axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=0, k=1, payment = "immediate") - 
+                        PNivel*axn(tabla, x=Edad+t, n=Duracion-t, i=Tipo_interes, m=0, payment = "immediate", k=1)
                     }
                     
   )
@@ -103,11 +111,11 @@ limpieza_cartera = function(df0,Tipo_interes){
       
     })
     
-    try({df0$prima_pura[i] = resultado_primas$prima_pura})
-    try({df0$prima_inventario[i] = resultado_primas$prima_inventario})
-    try({df0$prima_comercial[i] = resultado_primas$prima_comercial})
-    try({df0$prima_fraccionada[i] = resultado_primas$prima_fraccionada})
-    try({df0$prima_nivelada[i] = resultado_primas$prima_nivelada})
+    try({if(!is.null(resultado_primas$prima_pura)) df0$prima_pura[i] = resultado_primas$prima_pura})
+    try({if(!is.null(resultado_primas$prima_inventario)) df0$prima_inventario[i] = resultado_primas$prima_inventario})
+    try({if(!is.null(resultado_primas$prima_comercial)) df0$prima_comercial[i] = resultado_primas$prima_comercial})
+    try({if(!is.null(resultado_primas$prima_fraccionada)) df0$prima_fraccionada[i] = resultado_primas$prima_fraccionada})
+    try({if(!is.null(resultado_primas$prima_nivelada)) df0$prima_nivelada[i] = resultado_primas$prima_nivelada})
   }
   return(df0)
 }
