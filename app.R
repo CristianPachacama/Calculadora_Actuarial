@@ -23,6 +23,7 @@ source(file = 'modulos/moduloExtra_ui.R',local = T)
 source(file = 'modulos/modulo_id.R',local = T)
 source(file = 'codigo/calculos.R',local = T)
 source(file = 'codigo/extras.R',local = T)
+source(file = 'codigo/info.R',local = TRUE)
 
 df_cartera = read_excel(path = 'datos/Ejemplo_Cartera.xlsx')
 df_cartera = limpieza_cartera(df_cartera,Tipo_interes = 0.06)
@@ -35,13 +36,25 @@ ui = dashboardPagePlus(
     title = "Calculadora actuarial",
     # ENCABEZADO ...............................
     dashboardHeaderPlus(
-        title = "Calculadora actuarial"
-        # title = shinyDashboardLogo(
-        #     theme = "blue_gradient",
-        #     boldText = "Shiny",
-        #     mainText = "App",
-        #     badgeText = "v1.1"
-        # )
+        title = "Calculadora actuarial",
+        dropdownMenu(type = "messages",
+                     messageItem(
+                         from = "Sales Dept",
+                         message = "Sales are steady this month."
+                     ),
+                     messageItem(
+                         from = "New User",
+                         message = "How do I register?",
+                         icon = icon("question"),
+                         time = "13:45"
+                     ),
+                     messageItem(
+                         from = "Support",
+                         message = "The new server is ready.",
+                         icon = icon("life-ring"),
+                         time = "2014-12-01"
+                     )
+        )
     ),
     
     # PESTANIAS MENU ...........................
@@ -62,10 +75,10 @@ ui = dashboardPagePlus(
                      menuSubItem('Pospagables',tabName = '2_pospagables',icon = icon('line-chart'))
             ),
             # EXTRAS
-            menuItem("Calculadora Cartera",tabName = "3_cartera",icon = icon("line-chart")),
+            menuItem("Calculadora Cartera",tabName = "3_cartera",icon = icon("line-chart"))#,
             
             # Integrantes
-            menuItem("Integrantes",tabName = '4_integrantes', icon = icon('users'))
+            # menuItem("Integrantes",tabName = '4_integrantes', icon = icon('users'))
             
         )
     ),
@@ -79,29 +92,29 @@ ui = dashboardPagePlus(
         tabItems(
             
             # Fallecimiento ...........................
-            ModuloUI(id='1_fallecimiento',titulo='Seguro de Fallecimiento'),
+            ModuloUI(id='1_fallecimiento',titulo='Seguros de Vida en Caso de Fallecimiento'),
             # Supervivencia  ..............................
-            ModuloUI(id='1_supervivencia',titulo='Seguro de Superviviencia'),
+            ModuloUI(id='1_supervivencia',titulo='Seguros de Vida en Caso de Supervivencia'),
             # Mixto  ..............................
-            ModuloUI(id='1_mixto',titulo='Seguro Mixto'),
+            ModuloUI(id='1_mixto',titulo='Seguros de Vida Mixtos'),
             # Diferido  ..............................
-            ModuloUI(id='1_diferido',titulo='Seguro Diferido'),
+            ModuloUI(id='1_diferido',titulo='Seguros de Vida Diferidos'),
             # Cuantia Variable   .......................
             ModuloUI(id='1_cuantia_variable',titulo='Seguro de Cuantía Variable'),
             
             
             # Prepagables .......................
-            ModuloUI(id='2_prepagables',titulo='Renta Prepagables'),
+            ModuloUI(id='2_prepagables',titulo='Rentas Actuariales Prepagables'),
             # Pospagables .......................
-            ModuloUI(id='2_pospagables',titulo='Renta Pospagables'),
+            ModuloUI(id='2_pospagables',titulo='Rentas Actuariales Pospagables'),
             
             
             # Calculadora Cartera ..............
-            ModuloExtraUI(id='3_cartera',titulo='Calculadora Cartera'),
+            ModuloExtraUI(id='3_cartera',titulo='Calculadora Cartera')#,
             
             
             # Perfil Integrantes  .............
-            ModuloIdUI(id='4_integrantes',titulo = 'Integrantes')
+            # ModuloIdUI(id='4_integrantes',titulo = 'Integrantes')
             
             
         )

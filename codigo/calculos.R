@@ -232,7 +232,11 @@ calculo_producto = function(producto,Tipo_seguro,Edad,Sexo,Tipo_interes,
                   
                   
                   Duracion = 95-Edad
-                  l$prima_nivelada = l$prima_pura/axn(tabla, x=Edad, n = Duracion, i = Tipo_interes, m = 0, k = 1, payment = "due")
+                  l$prima_nivelada = l$prima_pura/axn(tabla, x=Edad, 
+                                                      n = Duracion, 
+                                                      i = Tipo_interes,
+                                                      m = 0, k = 1, 
+                                                      payment = "due")
                   
                   l$reserva = c()
                   for(t in 0:Duracion){
@@ -250,11 +254,16 @@ calculo_producto = function(producto,Tipo_seguro,Edad,Sexo,Tipo_interes,
                   l$prima_inventario = l$prima_pura*(1+Gastos_internos)
                   l$prima_comercial = l$prima_inventario*(1+Gastos_externos)
                   
-                  Duracion = 95-Edad
+                  # Duracion = 95-Edad
+                  # l$prima_fraccionada = Cuantia*axn(actuarialtable=tabla, x = Edad, 
+                  #                                   i = Tipo_interes, m = 0, k = Fraccion, payment = "due")-
+                  #   ((Fraccion-1)/(2*Fraccion))*(1-Exn(actuarialtable = tabla,x = Edad, n=Duracion,i = Tipo_interes))
+                  l$prima_fraccionada = (l$prima_pura/axn(tabla, x=Edad, 
+                                                          n = Fraccion , 
+                                                          i=Tipo_interes, 
+                                                          m=0, k=Temporalidad ,
+                                                          payment = "due"))/Temporalidad
                   
-                  l$prima_fraccionada = Cuantia*axn(actuarialtable=tabla, x = Edad, 
-                                                    i = Tipo_interes, m = 0, k = Fraccion, payment = "due")-
-                    ((Fraccion-1)/(2*Fraccion))*(1-Exn(actuarialtable = tabla,x = Edad, n=Duracion,i = Tipo_interes))
                 }
                 
               }
@@ -284,9 +293,14 @@ calculo_producto = function(producto,Tipo_seguro,Edad,Sexo,Tipo_interes,
                                              m = 0, k = Fraccion,payment = "due")
                   l$prima_inventario = l$prima_pura*(1+Gastos_internos)
                   l$prima_comercial = l$prima_inventario*(1+Gastos_externos)
-                  l$prima_fraccionada = Cuantia*axn(actuarialtable=tabla, x = Edad, n = Duracion,
-                                                    i = Tipo_interes, m = 0, k = Fraccion, payment = "due")-
-                    ((Fraccion-1)/(2*Fraccion))*(1-Exn(actuarialtable = tabla,x = Edad,n = Duracion,i = Tipo_interes))
+                  # l$prima_fraccionada = Cuantia*axn(actuarialtable=tabla, x = Edad, n = Duracion,
+                  #                                   i = Tipo_interes, m = 0, k = Fraccion, payment = "due")-
+                  #   ((Fraccion-1)/(2*Fraccion))*(1-Exn(actuarialtable = tabla,x = Edad,n = Duracion,i = Tipo_interes))
+                  l$prima_fraccionada = (l$prima_pura/axn(tabla, x=Edad, 
+                                                          n = Fraccion , 
+                                                          i=Tipo_interes, 
+                                                          m=0, k=Temporalidad ,
+                                                          payment = "due"))/Temporalidad
                 }
                 
               }
@@ -308,7 +322,11 @@ calculo_producto = function(producto,Tipo_seguro,Edad,Sexo,Tipo_interes,
                   l$prima_comercial = l$prima_inventario*(1+Gastos_externos)
                   
                   Duracion = 95-Edad
-                  l$prima_nivelada = l$prima_pura/axn(tabla, x=Edad, n = Duracion, i = Tipo_interes, m = 0, k = 1, payment = "due")
+                  l$prima_nivelada = l$prima_pura/axn(tabla, x=Edad, 
+                                                      n = Duracion, 
+                                                      i = Tipo_interes, 
+                                                      m = 0, k = 1, 
+                                                      payment = "due")
                   
                   l$reserva = c()
                   for(t in 0:Duracion){
@@ -325,10 +343,15 @@ calculo_producto = function(producto,Tipo_seguro,Edad,Sexo,Tipo_interes,
                   l$prima_inventario = l$prima_pura*(1+Gastos_internos)
                   l$prima_comercial = l$prima_inventario*(1+Gastos_externos)
                   
-                  Duracion = 95-Edad
-                  l$prima_fraccionada = Cuantia*axn(actuarialtable=tabla, x = Edad, 
-                                                    i = Tipo_interes, m = 0, k = Fraccion, payment = "immediate")-
-                    ((Fraccion+1)/(2*Fraccion))*(1-Exn(actuarialtable = tabla,x = Edad,n=Duracion,i = Tipo_interes))
+                  # Duracion = 95-Edad
+                  # l$prima_fraccionada = Cuantia*axn(actuarialtable=tabla, x = Edad, 
+                  #                                   i = Tipo_interes, m = 0, k = Fraccion, payment = "immediate")-
+                  #   ((Fraccion+1)/(2*Fraccion))*(1-Exn(actuarialtable = tabla,x = Edad,n=Duracion,i = Tipo_interes))
+                  l$prima_fraccionada = (l$prima_pura/axn(tabla, x=Edad, 
+                                                          n = Fraccion , 
+                                                          i=Tipo_interes, 
+                                                          m=0, k=Temporalidad ,
+                                                          payment = "due"))/Temporalidad
                 }
                 
               }
@@ -358,9 +381,14 @@ calculo_producto = function(producto,Tipo_seguro,Edad,Sexo,Tipo_interes,
                                              m = 0, k = Fraccion,payment = "immediate")
                   l$prima_inventario = l$prima_pura*(1+Gastos_internos)
                   l$prima_comercial = l$prima_inventario*(1+Gastos_externos)
-                  l$prima_fraccionada = Cuantia*axn(actuarialtable=tabla, x = Edad, n = Duracion,
-                                                    i = Tipo_interes, m = 0, k = Fraccion, payment = "immediate")-
-                    ((Fraccion+1)/(2*Fraccion))*(1-Exn(actuarialtable = tabla,x = Edad,n = Duracion,i = Tipo_interes))
+                  # l$prima_fraccionada = Cuantia*axn(actuarialtable=tabla, x = Edad, n = Duracion,
+                  #                                   i = Tipo_interes, m = 0, k = Fraccion, payment = "immediate")-
+                  #   ((Fraccion+1)/(2*Fraccion))*(1-Exn(actuarialtable = tabla,x = Edad,n = Duracion,i = Tipo_interes))
+                  l$prima_fraccionada = (l$prima_pura/axn(tabla, x=Edad, 
+                                                          n = Fraccion , 
+                                                          i=Tipo_interes, 
+                                                          m=0, k=Temporalidad ,
+                                                          payment = "due"))/Temporalidad
                 }
                 
               }

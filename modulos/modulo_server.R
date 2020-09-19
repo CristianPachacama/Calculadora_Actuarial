@@ -11,19 +11,18 @@ ModuloServer = function(id, producto = id){
                  
                  # PopUp Guia de usuario
                  observeEvent(input$informacion,{
-                   # print("fuera...")
-                   
-                   TextoInformacion = 'Información del Producto'
-                   
+
+                   # Textos estan en: codigo/info    ....................
                    sendSweetAlert(
-                     title = "Guía de Usuario",
+                     title = TextoTitulo(producto),
                      session = session,
-                     text = TextoInformacion,
+                     text = TextoInformacion(producto),
                      html = TRUE,
                      showCloseButton = TRUE,
+                     # btn_colors = "#5dade2",
                      type = "info"
                    )
-                   
+
                  })
                  
                  # Actualizar SelectInput tipo_fraccion  ...................

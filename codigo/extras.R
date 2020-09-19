@@ -120,3 +120,4 @@ limpieza_cartera = function(df0,Tipo_interes){
   return(df0)
 }
 
+

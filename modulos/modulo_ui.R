@@ -24,7 +24,7 @@ ModuloUI = function(id = "i_producto", titulo="Titulo_Pestania"){
                   label = "Guía de Usuario",
                   style = "jelly", #"pill",'unite','material-flat','minimal','stretch','fill'
                   icon = icon('info'),
-                  color = "success"
+                  color = "primary"
                 ),br(),br(),
                 
                 
